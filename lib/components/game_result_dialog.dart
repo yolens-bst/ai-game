@@ -3,10 +3,25 @@ import 'package:get/get.dart';
 import '../models/game_result.dart';
 import '../game/sound_manager.dart';
 
-class GameResultDialog extends StatelessWidget {
+class GameResultDialog extends StatefulWidget {
   final GameResult result;
 
   const GameResultDialog({super.key, required this.result});
+
+  @override
+  State<GameResultDialog> createState() => _GameResultDialogState();
+}
+
+class _GameResultDialogState extends State<GameResultDialog> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.result.isSuccess) {
+      SoundManager().playVictory();
+    } else {
+      SoundManager().playDefeat();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,26 +32,26 @@ class GameResultDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              result.resultText,
+              widget.result.resultText,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: result.isSuccess ? Colors.green : Colors.red,
+                color: widget.result.isSuccess ? Colors.green : Colors.red,
               ),
             ),
             const SizedBox(height: 20),
-            _buildStatItem('总得分', '${result.totalScore}分'),
-            _buildStatItem('正确点击', '${result.correctTaps}次'),
-            _buildStatItem('错误点击', '${result.wrongTaps}次'),
+            _buildStatItem('总得分', '${widget.result.totalScore}分'),
+            _buildStatItem('正确点击', '${widget.result.correctTaps}次'),
+            _buildStatItem('错误点击', '${widget.result.wrongTaps}次'),
             _buildStatItem(
-                '准确率', '${(result.accuracy * 100).toStringAsFixed(1)}%'),
-            _buildStatItem('精准点击', '${result.preciseHits}次'),
+                '准确率', '${(widget.result.accuracy * 100).toStringAsFixed(1)}%'),
+            _buildStatItem('精准点击', '${widget.result.preciseHits}次'),
             _buildStatItem(
-                '最快反应', '${result.fastestResponse.toStringAsFixed(2)}秒'),
+                '最快反应', '${widget.result.fastestResponse.toStringAsFixed(2)}秒'),
             _buildStatItem(
-                '最慢反应', '${result.slowestResponse.toStringAsFixed(2)}秒'),
+                '最慢反应', '${widget.result.slowestResponse.toStringAsFixed(2)}秒'),
             _buildStatItem(
-                '平均反应', '${result.averageResponse.toStringAsFixed(2)}秒'),
+                '平均反应', '${widget.result.averageResponse.toStringAsFixed(2)}秒'),
             const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:vector_math/vector_math_64.dart';
+import 'sound_manager.dart';
 
 class ComboSystem {
   int _currentCombo = 0;
@@ -15,6 +16,7 @@ class ComboSystem {
           hitTime.difference(_lastCorrectHitTime!) <
               const Duration(seconds: 2)) {
         _currentCombo++;
+        SoundManager().playCombo(_currentCombo);
       } else {
         _currentCombo = 1;
       }

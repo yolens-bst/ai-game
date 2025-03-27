@@ -11,10 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
   get: ^4.6.5
-  flame: ^1.10.0
+  flame: ^1.26.1
   vector_math: ^2.1.4
-  lottie: ^2.7.0
   just_audio: ^0.9.34
+  shared_preferences: ^2.5.2
 
 dev_dependencies:
   flutter_test:
@@ -25,12 +25,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/sounds/bgm.mp3
-    - assets/sounds/home-bgm.mp3  
-    - assets/sounds/correct.mp3
-    - assets/sounds/wrong.mp3
-    - assets/sounds/combo.mp3
-    - assets/sounds/start.mp3
-    - assets/sounds/end.mp3
-    - assets/sounds/click.mp3
-    - assets/sounds/click.wav
+    - assets/sounds/

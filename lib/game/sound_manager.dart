@@ -22,45 +22,19 @@ class SoundManager {
     await _sfxPlayer.setAsset('assets/sounds/combo.mp3');
     await _sfxPlayer.setAsset('assets/sounds/start.mp3');
     await _sfxPlayer.setAsset('assets/sounds/end.mp3');
-
-    // 根据平台预加载不同格式的点击音效
-    if (Platform.isWindows) {
-      await _sfxPlayer.setAsset('assets/sounds/click.wav');
-    } else {
-      await _sfxPlayer.setAsset('assets/sounds/click.mp3');
-    }
+    await _sfxPlayer.setAsset('assets/sounds/defeat.mp3');
+    await _sfxPlayer.setAsset('assets/sounds/victory.mp3');
+    await _sfxPlayer.setAsset('assets/sounds/click.mp3');
   }
 
   Future<void> playClick() async {
     if (!_enabled) return;
     try {
-      await _sfxPlayer.stop();
-      String path = 'assets/sounds/click.mp3';
-
-      // Windows平台使用WAV格式以获得更好兼容性
-      if (Platform.isWindows) {
-        path = 'assets/sounds/click.wav';
-      }
-      // Android平台降低音量避免爆音
-      else if (Platform.isAndroid) {
-        await _sfxPlayer.setVolume(0.8);
-      }
-
-      await _sfxPlayer.setAsset(path);
+      await _sfxPlayer.setVolume(0.8);
+      await _sfxPlayer.setAsset('assets/sounds/click.mp3');
       await _sfxPlayer.play();
     } catch (e) {
       print('Error playing click sound: $e');
-      if (e is PlatformException) {
-        print('Platform error details: ${e.code} - ${e.message}');
-        print('Stack trace: ${e.stacktrace}');
-
-        // 回退方案
-        if (Platform.isWindows || Platform.isAndroid) {
-          print('尝试使用MP3格式回退');
-          await _sfxPlayer.setAsset('assets/sounds/click.mp3');
-          await _sfxPlayer.play();
-        }
-      }
     }
   }
 
@@ -70,7 +44,7 @@ class SoundManager {
       await _sfxPlayer.setAsset('assets/sounds/correct.mp3');
       await _sfxPlayer.play();
     } catch (e) {
-      print('Error playing correct sound: $e');
+      print('Error playing tap success sound: $e');
     }
   }
 
@@ -80,7 +54,7 @@ class SoundManager {
       await _sfxPlayer.setAsset('assets/sounds/wrong.mp3');
       await _sfxPlayer.play();
     } catch (e) {
-      print('Error playing wrong sound: $e');
+      print('Error playing tap error sound: $e');
     }
   }
 
@@ -116,6 +90,26 @@ class SoundManager {
     }
   }
 
+  Future<void> playDefeat() async {
+    if (!_enabled) return;
+    try {
+      await _sfxPlayer.setAsset('assets/sounds/defeat.mp3');
+      await _sfxPlayer.play();
+    } catch (e) {
+      print('Error playing defeat sound: $e');
+    }
+  }
+
+  Future<void> playVictory() async {
+    if (!_enabled) return;
+    try {
+      await _sfxPlayer.setAsset('assets/sounds/victory.mp3');
+      await _sfxPlayer.play();
+    } catch (e) {
+      print('Error playing victory sound: $e');
+    }
+  }
+
   Future<void> playBgm({bool isHome = false}) async {
     if (!_enabled) return;
     try {
@@ -130,7 +124,7 @@ class SoundManager {
   }
 
   Future<void> stopBgm() async {
-    await _fadeOut();
+    // await _fadeOut();
     await _bgmPlayer.stop();
   }
 

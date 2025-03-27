@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
 }
 
 class GameScreen extends StatelessWidget {
-  final String difficulty;
+  final int difficulty;
   final String duration;
   final bool enableSwing;
   final bool enableHints;
@@ -52,19 +52,6 @@ class GameScreen extends StatelessWidget {
     required this.enableSwing,
     required this.enableHints,
   });
-
-  int _parseDifficulty(String difficulty) {
-    switch (difficulty) {
-      case '简单':
-        return 0;
-      case '中等':
-        return 1;
-      case '困难':
-        return 2;
-      default:
-        return 1;
-    }
-  }
 
   double _parseDuration(String duration) {
     return double.parse(duration.replaceAll('秒', ''));
@@ -91,7 +78,7 @@ class GameScreen extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               child: GameWidget(
                 game: TickleGame(
-                  difficulty: _parseDifficulty(difficulty),
+                  difficulty: difficulty,
                   enableSwing: enableSwing,
                   enableHints: enableHints,
                   totalGameTime: _parseDuration(duration),

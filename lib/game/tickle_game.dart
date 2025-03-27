@@ -13,6 +13,7 @@ import 'combo_system.dart';
 import '../components/game_result_dialog.dart';
 import 'character_renderer.dart';
 import 'game_ui_renderer.dart';
+import 'sound_manager.dart';
 
 enum GameState { waiting, playing, gameOver }
 
@@ -30,6 +31,7 @@ class TickleGame extends FlameGame with TapCallbacks {
   final bool enableSwing;
   final bool enableHints;
   final double totalGameTime;
+  final SoundManager _soundManager = SoundManager();
 
   TickleGame({
     required this.difficulty,
@@ -78,6 +80,7 @@ class TickleGame extends FlameGame with TapCallbacks {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    _soundManager.playBgm(isHome: false);
     _initBodyParts();
     camera.viewfinder.visibleGameSize = Vector2(size.x, size.y);
     camera.viewfinder.position = Vector2(size.x / 2, size.y / 2);
@@ -187,14 +190,15 @@ class TickleGame extends FlameGame with TapCallbacks {
     currentTarget = newTarget;
 
     questionTimeLeft = difficulty == 0
-        ? 7
+        ? 5
         : difficulty == 1
-            ? 5
-            : 3;
+            ? 3
+            : 2;
   }
 
   void endGame() {
     gameTimer.stop();
+    _soundManager.stopBgm();
     // 过滤掉无效响应时间(<=0)
     final validResponseTimes = responseTimes.where((t) => t > 0).toList();
     final result = GameResult(
@@ -356,6 +360,7 @@ class TickleGame extends FlameGame with TapCallbacks {
           final points = (distanceScore * comboMultiplier).ceil();
           score += points;
           comboSystem.recordHit(true, DateTime.now());
+          SoundManager().playCorrect();
 
           // 添加得分动画 (从点击位置开始)
           gameUIRenderer.addScoreAnimation(
@@ -370,6 +375,7 @@ class TickleGame extends FlameGame with TapCallbacks {
           _nextQuestion();
         } else {
           wrongTaps++;
+          SoundManager().playWrong();
           _nextQuestion();
         }
       }

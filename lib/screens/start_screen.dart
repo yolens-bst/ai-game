@@ -1,12 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../game/sound_manager.dart';
+import '../models/game_settings.dart';
 
-class StartScreen extends StatelessWidget {
-  final RxString difficulty = '中等'.obs;
-  final RxString duration = '30秒'.obs;
-  final RxBool enableSwing = true.obs;
-  final RxBool enableHints = true.obs;
+class StartScreen extends StatefulWidget {
+  @override
+  _StartScreenState createState() => _StartScreenState();
+}
+
+class _StartScreenState extends State<StartScreen> {
+  final SoundManager _soundManager = SoundManager();
+
+  final GameSettings _settings = GameSettings();
+
+  @override
+  void initState() {
+    super.initState();
+    _settings.init().then((_) {
+      _soundManager.setEnabled(_settings.soundEnabled);
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _soundManager.stopBgm();
+    _soundManager.setEnabled(true); // 恢复默认bgm状态
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +35,37 @@ class StartScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('抓痒痒游戏'),
         centerTitle: true,
+        actions: [
+          AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            decoration: BoxDecoration(
+              color:
+                  _settings.soundEnabled ? Colors.blue[700] : Colors.grey[600],
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: IconButton(
+              icon: AnimatedSwitcher(
+                duration: Duration(milliseconds: 200),
+                child: Icon(
+                  _settings.soundEnabled ? Icons.volume_up : Icons.volume_off,
+                  key: ValueKey<bool>(_settings.soundEnabled),
+                  color: Colors.white,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  _settings.soundEnabled = !_settings.soundEnabled;
+                  _soundManager.setEnabled(_settings.soundEnabled);
+                  if (_settings.soundEnabled) {
+                    _soundManager.playBgm(isHome: true);
+                  } else {
+                    _soundManager.stopBgm();
+                  }
+                });
+              },
+            ),
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -70,39 +122,18 @@ class StartScreen extends StatelessWidget {
                       ),
                       minimumSize: Size(double.infinity, 0),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       SoundManager().playClick();
+                      await _settings.saveSettings();
                       Get.offNamed('/game', arguments: {
-                        'difficulty': difficulty.value,
-                        'duration': duration.value,
-                        'enableSwing': enableSwing.value,
-                        'enableHints': enableHints.value,
+                        'difficulty': _settings.difficulty,
+                        'duration': _settings.duration,
+                        'enableSwing': _settings.enableSwing,
+                        'enableHints': _settings.enableHints,
                       });
                     },
                     child: Text(
                       '开始游戏',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade400,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      minimumSize: Size(double.infinity, 0),
-                    ),
-                    onPressed: () {
-                      SoundManager().playClick();
-                      Get.back();
-                    },
-                    child: Text(
-                      '退出游戏',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -119,51 +150,64 @@ class StartScreen extends StatelessWidget {
   }
 
   Widget _buildDifficultySelector() {
-    return Obx(() => ListTile(
-          title: Text('难度选择'),
-          trailing: SegmentedButton(
-            segments: [
-              ButtonSegment(value: '简单', label: Text('简单')),
-              ButtonSegment(value: '中等', label: Text('中等')),
-              ButtonSegment(value: '困难', label: Text('困难')),
-            ],
-            selected: {difficulty.value},
-            onSelectionChanged: (newSelection) {
-              difficulty.value = newSelection.first;
-            },
-          ),
-        ));
+    return ListTile(
+      title: Text('难度选择'),
+      trailing: SegmentedButton(
+        segments: [
+          ButtonSegment(value: 0, label: Text('简单')),
+          ButtonSegment(value: 1, label: Text('中等')),
+          ButtonSegment(value: 2, label: Text('困难')),
+        ],
+        selected: {_settings.difficulty},
+        onSelectionChanged: (newSelection) {
+          setState(() {
+            _settings.difficulty = newSelection.first;
+          });
+        },
+      ),
+    );
   }
 
   Widget _buildDurationSelector() {
-    return Obx(() => ListTile(
-          title: Text('游戏时长'),
-          trailing: SegmentedButton(
-            segments: [
-              ButtonSegment(value: '10秒', label: Text('10秒')),
-              ButtonSegment(value: '30秒', label: Text('30秒')),
-            ],
-            selected: {duration.value},
-            onSelectionChanged: (newSelection) {
-              duration.value = newSelection.first;
-            },
-          ),
-        ));
+    return ListTile(
+      title: Text('游戏时长'),
+      trailing: SegmentedButton(
+        segments: [
+          ButtonSegment(value: '10秒', label: Text('10秒')),
+          ButtonSegment(value: '20秒', label: Text('20秒')),
+          ButtonSegment(value: '30秒', label: Text('30秒')),
+        ],
+        selected: {_settings.duration},
+        onSelectionChanged: (newSelection) {
+          setState(() {
+            _settings.duration = newSelection.first;
+          });
+        },
+      ),
+    );
   }
 
   Widget _buildSwingToggle() {
-    return Obx(() => SwitchListTile(
-          title: Text('开启人物摆动'),
-          value: enableSwing.value,
-          onChanged: (value) => enableSwing.value = value,
-        ));
+    return SwitchListTile(
+      title: Text('开启人物摆动'),
+      value: _settings.enableSwing,
+      onChanged: (value) {
+        setState(() {
+          _settings.enableSwing = value;
+        });
+      },
+    );
   }
 
   Widget _buildHintsToggle() {
-    return Obx(() => SwitchListTile(
-          title: Text('显示辅助提示'),
-          value: enableHints.value,
-          onChanged: (value) => enableHints.value = value,
-        ));
+    return SwitchListTile(
+      title: Text('显示辅助提示'),
+      value: _settings.enableHints,
+      onChanged: (value) {
+        setState(() {
+          _settings.enableHints = value;
+        });
+      },
+    );
   }
 }
