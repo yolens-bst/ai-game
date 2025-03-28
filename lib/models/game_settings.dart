@@ -1,7 +1,7 @@
 enum DifficultyLevel {
-  easy(1, '简单'),
-  medium(2, '中等'),
-  hard(3, '困难');
+  easy(1, 'easy'),
+  medium(2, 'medium'),
+  hard(3, 'hard');
 
   final int value;
   final String label;
@@ -21,6 +21,7 @@ class GameSettings {
   bool soundEnabled;
   bool vibrationEnabled;
   String playerName;
+  String language;
 
   GameSettings({
     this.difficulty = DifficultyLevel.medium,
@@ -29,7 +30,8 @@ class GameSettings {
     this.enableHints = true,
     this.soundEnabled = true,
     this.vibrationEnabled = true,
-    this.playerName = '玩家',
+    this.playerName = 'Player',
+    this.language = 'zh_CN',
   });
 
   factory GameSettings.fromJson(Map<String, dynamic> json) {
@@ -40,7 +42,8 @@ class GameSettings {
       enableHints: json['enableHints'] ?? true,
       soundEnabled: json['soundEnabled'] ?? true,
       vibrationEnabled: json['vibrationEnabled'] ?? true,
-      playerName: json['playerName'] ?? '玩家',
+      playerName: json['playerName'] ?? 'Player',
+      language: json['language'] ?? 'zh_CN',
     );
   }
 
@@ -53,6 +56,7 @@ class GameSettings {
       'soundEnabled': soundEnabled,
       'vibrationEnabled': vibrationEnabled,
       'playerName': playerName,
+      'language': language,
     };
   }
 }

@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import '../game/sound_manager.dart';
 import '../models/game_settings.dart';
 import '../controllers/leaderboard_controller.dart';
+import '../languages/translations.dart';
 
 class LeaderboardScreen extends StatelessWidget {
   final GameSettings settings;
@@ -17,7 +18,7 @@ class LeaderboardScreen extends StatelessWidget {
     return PopScope(
       onPopInvokedWithResult: (didPop, result) => SoundManager().playClick(),
       child: Scaffold(
-        appBar: AppBar(title: Text('排行榜'), centerTitle: true),
+        appBar: AppBar(title: Text('leaderboard'.tr), centerTitle: true),
         body: Column(
           children: [
             Padding(
@@ -27,15 +28,15 @@ class LeaderboardScreen extends StatelessWidget {
                   segments: [
                     ButtonSegment(
                       value: DifficultyLevel.easy,
-                      label: Text('简单'),
+                      label: Text('easy'.tr),
                     ),
                     ButtonSegment(
                       value: DifficultyLevel.medium,
-                      label: Text('中等'),
+                      label: Text('medium'.tr),
                     ),
                     ButtonSegment(
                       value: DifficultyLevel.hard,
-                      label: Text('困难'),
+                      label: Text('hard'.tr),
                     ),
                   ],
                   selected: {diff.value},
@@ -56,7 +57,7 @@ class LeaderboardScreen extends StatelessWidget {
                           Lottie.asset('assets/lotties/loser.json', width: 150),
                           SizedBox(height: 16),
                           Text(
-                            '暂无排行榜数据',
+                            'noLeaderboardData'.tr,
                             style: Theme.of(context).textTheme.headlineSmall,
                           ),
                           SizedBox(height: 24),
@@ -65,7 +66,7 @@ class LeaderboardScreen extends StatelessWidget {
                               SoundManager().playClick();
                               Get.back();
                             },
-                            child: Text('去挑战'),
+                            child: Text('goChallenge'.tr),
                           ),
                         ],
                       ),
@@ -76,12 +77,16 @@ class LeaderboardScreen extends StatelessWidget {
                           (context, index) => ListTile(
                             leading: CircleAvatar(child: Text('${index + 1}')),
                             title: Text(
-                              '玩家: ${results[index].settings.playerName}',
+                              '${'playerName'.tr}:${results[index].settings.playerName}',
                             ),
                             subtitle: Text(
-                              '难度: ${results[index].settings.difficulty.label}',
+                              '${'difficultyLevel'.tr}: ${results[index].settings.difficulty.label.tr}',
                             ),
-                            trailing: Text('${results[index].score} 分'),
+                            trailing: Text(
+                              'scorePoints'.trParams({
+                                'points': '${results[index].score}',
+                              }),
+                            ),
                           ),
                     );
               }),

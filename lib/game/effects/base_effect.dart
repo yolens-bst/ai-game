@@ -4,12 +4,19 @@ import 'effect_type.dart';
 
 abstract class BaseEffect extends Component {
   EffectType get type;
-  bool get isExpired;
+  bool _isExpired = false;
+  bool get isExpired => _isExpired;
   int get zIndex;
+
+  void markExpired() {
+    _isExpired = true;
+  }
 
   @override
   void render(Canvas canvas) {
     if (isExpired) return;
+    debugPrint('渲染特效: ${runtimeType}');
+
     renderEffect(canvas);
   }
 

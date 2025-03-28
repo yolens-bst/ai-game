@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flame/game.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:tickle_game/game/sound_manager.dart';
+import 'package:tickle_game/languages/translations.dart';
 import 'game/tickle_game.dart';
 import 'screens/start_screen.dart';
 import 'package:just_audio/just_audio.dart';
@@ -24,7 +25,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: '抓痒痒',
+      title: 'appTitle'.tr,
+      translations: Languages(),
+      locale:
+          Get.find<GameSettingsController>().settings.language == 'zh_CN'
+              ? const Locale('zh', 'CN')
+              : const Locale('en', 'US'),
+      fallbackLocale: const Locale('zh', 'CN'),
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -55,13 +62,13 @@ class GameScreen extends StatelessWidget {
       onPopInvokedWithResult: (didPop, result) => SoundManager().playClick(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('抓痒痒'),
+          title: Text('appTitle'.tr),
           centerTitle: true,
           actions: [
             IconButton(
               icon: Icon(Icons.exit_to_app),
               onPressed: () => Get.offAndToNamed('/'),
-              tooltip: '退出游戏',
+              tooltip: 'exitGame'.tr,
             ),
           ],
         ),

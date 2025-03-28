@@ -66,8 +66,13 @@ class GameSettingsController extends GetxController {
     });
   }
 
+  void setLanguage(String language) {
+    _settings.update((val) {
+      val?.language = language;
+    });
+  }
+
   Future<void> saveSettings() async {
-    // 保存设置到GetX存储
     await GetStorage().write('game_settings', _settings.value.toJson());
   }
 }

@@ -5,6 +5,7 @@ import '../models/game_settings.dart';
 import './rules_screen.dart';
 import './leaderboard_screen.dart';
 import '../controllers/game_settings_controller.dart';
+import '../languages/translations.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -36,7 +37,7 @@ class StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('抓痒痒'),
+        title: Text('appTitle'.tr),
         centerTitle: true,
         actions: [
           Obx(
@@ -95,7 +96,7 @@ class StartScreenState extends State<StartScreen> {
                 children: [
                   ListTile(
                     title: Text(
-                      '游戏设置',
+                      'gameSettings'.tr,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -115,6 +116,8 @@ class StartScreenState extends State<StartScreen> {
                   ),
                   Divider(height: 1),
                   _buildPlayerNameInput(),
+                  Divider(height: 1),
+                  _buildLanguageSelector(),
                   Divider(height: 1),
                   _buildDifficultySelector(),
                   Divider(height: 1),
@@ -152,7 +155,7 @@ class StartScreenState extends State<StartScreen> {
                       );
                     },
                     child: Text(
-                      '开始游戏',
+                      'startGame'.tr,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -169,7 +172,7 @@ class StartScreenState extends State<StartScreen> {
                       );
                     },
                     child: Text(
-                      '查看游戏规则',
+                      'viewRules'.tr,
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.blue.shade700,
@@ -185,15 +188,39 @@ class StartScreenState extends State<StartScreen> {
     );
   }
 
+  Widget _buildLanguageSelector() {
+    return Obx(
+      () => ListTile(
+        title: Text('language'.tr),
+        trailing: DropdownButton<String>(
+          value: _settingsController.settings.language,
+          items: [
+            DropdownMenuItem(value: 'zh_CN', child: Text('chinese'.tr)),
+            DropdownMenuItem(value: 'en_US', child: Text('english'.tr)),
+          ],
+          onChanged: (value) {
+            if (value != null) {
+              _settingsController.setLanguage(value);
+              Get.updateLocale(Locale(value));
+            }
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildDifficultySelector() {
     return Obx(
       () => ListTile(
-        title: Text('难度选择'),
+        title: Text('difficultyLevel'.tr),
         trailing: SegmentedButton<DifficultyLevel>(
           segments: [
-            ButtonSegment(value: DifficultyLevel.easy, label: Text('简单')),
-            ButtonSegment(value: DifficultyLevel.medium, label: Text('中等')),
-            ButtonSegment(value: DifficultyLevel.hard, label: Text('困难')),
+            ButtonSegment(value: DifficultyLevel.easy, label: Text('easy'.tr)),
+            ButtonSegment(
+              value: DifficultyLevel.medium,
+              label: Text('medium'.tr),
+            ),
+            ButtonSegment(value: DifficultyLevel.hard, label: Text('hard'.tr)),
           ],
           selected: {_settingsController.settings.difficulty},
           onSelectionChanged: (newSelection) {
@@ -207,12 +234,12 @@ class StartScreenState extends State<StartScreen> {
   Widget _buildDurationSelector() {
     return Obx(
       () => ListTile(
-        title: Text('游戏时长'),
+        title: Text('gameDuration'.tr),
         trailing: SegmentedButton<double>(
           segments: [
-            ButtonSegment(value: 10, label: Text('10秒')),
-            ButtonSegment(value: 20, label: Text('20秒')),
-            ButtonSegment(value: 30, label: Text('30秒')),
+            ButtonSegment(value: 10, label: Text('10seconds'.tr)),
+            ButtonSegment(value: 20, label: Text('20seconds'.tr)),
+            ButtonSegment(value: 30, label: Text('30seconds'.tr)),
           ],
           selected: {_settingsController.settings.duration},
           onSelectionChanged: (newSelection) {
@@ -226,7 +253,7 @@ class StartScreenState extends State<StartScreen> {
   Widget _buildSwingToggle() {
     return Obx(
       () => SwitchListTile(
-        title: Text('开启人物摆动'),
+        title: Text('enableSwing'.tr),
         value: _settingsController.settings.enableSwing,
         onChanged: _settingsController.setEnableSwing,
       ),
@@ -236,7 +263,7 @@ class StartScreenState extends State<StartScreen> {
   Widget _buildHintsToggle() {
     return Obx(
       () => SwitchListTile(
-        title: Text('显示辅助提示'),
+        title: Text('showHints'.tr),
         value: _settingsController.settings.enableHints,
         onChanged: _settingsController.setEnableHints,
       ),
@@ -246,7 +273,7 @@ class StartScreenState extends State<StartScreen> {
   Widget _buildVibrationToggle() {
     return Obx(
       () => SwitchListTile(
-        title: Text('开启振动反馈'),
+        title: Text('enableVibration'.tr),
         value: _settingsController.settings.vibrationEnabled,
         onChanged: _settingsController.setVibrationEnabled,
       ),
@@ -256,7 +283,7 @@ class StartScreenState extends State<StartScreen> {
   Widget _buildPlayerNameInput() {
     return Obx(
       () => ListTile(
-        title: Text('玩家名称'),
+        title: Text('playerName'.tr),
         trailing: SizedBox(
           width: 150,
           child: Padding(
@@ -266,7 +293,7 @@ class StartScreenState extends State<StartScreen> {
                 text: _settingsController.settings.playerName,
               ),
               decoration: InputDecoration(
-                hintText: '输入昵称',
+                hintText: 'enterNicknameHint'.tr,
                 hintStyle: TextStyle(color: Colors.grey),
                 filled: true,
                 fillColor: Colors.white,

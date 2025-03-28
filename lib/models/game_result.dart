@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import '../models/game_settings.dart';
 
 class GameResult {
@@ -30,7 +31,8 @@ class GameResult {
   }) : totalTaps = correctTaps + wrongTaps,
        timestamp = timestamp ?? DateTime.now();
 
-  String get resultText => isSuccess ? '挑战成功!' : '挑战失败';
+  String get resultText =>
+      isSuccess ? 'challengeSuccess'.tr : 'challengeFailure'.tr;
 
   Map<String, dynamic> toJson() => {
     'totalScore': totalScore,

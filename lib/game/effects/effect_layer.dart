@@ -3,6 +3,14 @@ import 'package:flutter/material.dart';
 import 'base_effect.dart';
 
 class EffectLayer extends Component {
+  static final EffectLayer _instance = EffectLayer._internal();
+
+  factory EffectLayer() {
+    return _instance;
+  }
+
+  EffectLayer._internal();
+
   final List<BaseEffect> _effects = [];
 
   void addEffect(BaseEffect effect) {

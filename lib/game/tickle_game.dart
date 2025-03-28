@@ -29,6 +29,7 @@ class Circle {
 }
 
 class TickleGame extends FlameGame with TapCallbacks {
+  static late TickleGame instance;
   final GameSettings settings;
   final SoundManager _soundManager = SoundManager();
 
@@ -73,6 +74,7 @@ class TickleGame extends FlameGame with TapCallbacks {
 
   @override
   Future<void> onLoad() async {
+    instance = this;
     await super.onLoad();
     _soundManager.playBgm(isHome: false);
     _initBodyParts();

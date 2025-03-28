@@ -41,29 +41,35 @@ class _GameResultDialogState extends State<GameResultDialog> {
               ),
             ),
             const SizedBox(height: 20),
-            _buildStatItem('总得分', '${widget.result.totalScore}分'),
+            _buildStatItem('scoreLabel'.tr, '${widget.result.totalScore}'),
             _buildStatItem(
-              '难度级别',
+              'difficultyLabel'.tr,
               _getDifficultyText(widget.result.settings.difficulty),
             ),
-            _buildStatItem('正确点击', '${widget.result.correctTaps}次'),
-            _buildStatItem('错误点击', '${widget.result.wrongTaps}次'),
             _buildStatItem(
-              '准确率',
+              'correctTapsLabel'.tr,
+              '${widget.result.correctTaps}',
+            ),
+            _buildStatItem('wrongTapsLabel'.tr, '${widget.result.wrongTaps}'),
+            _buildStatItem(
+              'accuracyLabel'.tr,
               '${(widget.result.accuracy * 100).toStringAsFixed(2)}%',
             ),
-            _buildStatItem('精准点击', '${widget.result.preciseHits}次'),
             _buildStatItem(
-              '最快反应',
-              '${widget.result.fastestResponse.toStringAsFixed(4)}秒',
+              'preciseHitsLabel'.tr,
+              '${widget.result.preciseHits}',
             ),
             _buildStatItem(
-              '最慢反应',
-              '${widget.result.slowestResponse.toStringAsFixed(4)}秒',
+              'fastestResponseLabel'.tr,
+              '${widget.result.fastestResponse.toStringAsFixed(4)}s',
             ),
             _buildStatItem(
-              '平均反应',
-              '${widget.result.averageResponse.toStringAsFixed(4)}秒',
+              'slowestResponseLabel'.tr,
+              '${widget.result.slowestResponse.toStringAsFixed(4)}s',
+            ),
+            _buildStatItem(
+              'averageResponseLabel'.tr,
+              '${widget.result.averageResponse.toStringAsFixed(4)}s',
             ),
             const SizedBox(height: 30),
             Row(
@@ -79,7 +85,7 @@ class _GameResultDialogState extends State<GameResultDialog> {
                     Get.back(result: 'restart');
                   },
                   icon: const Icon(Icons.refresh),
-                  label: const Text('再来一次'),
+                  label: Text('restartButton'.tr),
                 ),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
@@ -91,7 +97,7 @@ class _GameResultDialogState extends State<GameResultDialog> {
                     Get.back(result: 'home');
                   },
                   icon: const Icon(Icons.home),
-                  label: const Text('回到首页'),
+                  label: Text('homeButton'.tr),
                 ),
               ],
             ),
@@ -104,13 +110,13 @@ class _GameResultDialogState extends State<GameResultDialog> {
   String _getDifficultyText(DifficultyLevel difficulty) {
     switch (difficulty) {
       case DifficultyLevel.easy:
-        return '简单';
+        return 'easy'.tr;
       case DifficultyLevel.medium:
-        return '中等';
+        return 'medium'.tr;
       case DifficultyLevel.hard:
-        return '困难';
+        return 'hard'.tr;
       default:
-        return '未知';
+        return 'unknown'.tr;
     }
   }
 

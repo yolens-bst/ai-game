@@ -28,10 +28,7 @@ class ScoreEffect extends BaseEffect {
     final opacity = 1.0 - progress;
     final yOffset = 20 * progress;
     final xOffset = 10 * math.sin(progress * math.pi * 2);
-    final offset = Offset(
-      position.dx + xOffset,
-      position.dy + yOffset,
-    );
+    final offset = Offset(position.dx + xOffset, position.dy + yOffset);
 
     final textStyle = TextStyle(
       color: Colors.yellow[700]!.withOpacity(opacity),

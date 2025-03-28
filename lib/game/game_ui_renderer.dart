@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' as material;
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'dart:math' as math;
@@ -42,6 +43,7 @@ class GameUIRenderer {
     canvas.clipRect(Rect.fromLTWH(0, 0, width, double.infinity));
     // 绘制特效（不受UI面板高度限制）
     effectLayer.render(canvas);
+
     // 恢复画布状态
     canvas.restore();
   }
@@ -55,7 +57,10 @@ class GameUIRenderer {
     const progressRadius = 20.0;
 
     // 绘制分数（左上角）
-    final scoreText = material.TextSpan(text: '分数: $score', style: textStyle);
+    final scoreText = material.TextSpan(
+      text: 'scoreLabel'.tr + ': $score',
+      style: textStyle,
+    );
     final scorePainter = material.TextPainter(
       text: scoreText,
       textDirection: material.TextDirection.ltr,
@@ -119,7 +124,7 @@ class GameUIRenderer {
 
     // 绘制总时间（右上角）
     final totalTimeText = material.TextSpan(
-      text: '剩余: ${gameTimeLeft.toInt()}s',
+      text: 'timeLeftLabel'.tr + ': ${gameTimeLeft.toInt()}s',
       style: textStyle,
     );
     final totalTimePainter = material.TextPainter(
@@ -141,7 +146,7 @@ class GameUIRenderer {
 
     const targetHeight = 60.0;
     final targetText = material.TextSpan(
-      text: '点击: ${_getBodyPartName(targetBodyPart!)}',
+      text: _getBodyPartName(targetBodyPart!),
       style: material.TextStyle(
         color: material.Colors.black,
         fontSize: 24,
@@ -165,17 +170,17 @@ class GameUIRenderer {
   String _getBodyPartName(BodyPart part) {
     switch (part) {
       case BodyPart.head:
-        return '头部';
+        return 'headPart'.tr;
       case BodyPart.belly:
-        return '肚子';
+        return 'bellyPart'.tr;
       case BodyPart.leftHand:
-        return '左手';
+        return 'leftHandPart'.tr;
       case BodyPart.rightHand:
-        return '右手';
+        return 'rightHandPart'.tr;
       case BodyPart.leftFoot:
-        return '左脚';
+        return 'leftFootPart'.tr;
       case BodyPart.rightFoot:
-        return '右脚';
+        return 'rightFootPart'.tr;
     }
   }
 }
