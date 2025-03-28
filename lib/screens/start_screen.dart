@@ -2,33 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../game/sound_manager.dart';
 import '../models/game_settings.dart';
+import './rules_screen.dart';
+import './leaderboard_screen.dart';
+import '../controllers/game_settings_controller.dart';
 
 class StartScreen extends StatefulWidget {
+  const StartScreen({super.key});
+
   @override
-  _StartScreenState createState() => _StartScreenState();
+  StartScreenState createState() => StartScreenState();
 }
 
-class _StartScreenState extends State<StartScreen> {
+class StartScreenState extends State<StartScreen> {
   final SoundManager _soundManager = SoundManager();
-
-  final GameSettings _settings = GameSettings();
+  final GameSettingsController _settingsController =
+      Get.find<GameSettingsController>();
 
   @override
   void initState() {
     super.initState();
-    _settings.init().then((_) {
-      _soundManager.setEnabled(_settings.soundEnabled);
-      setState(() {});
-      if (_settings.soundEnabled) {
-        _soundManager.playBgm(isHome: true);
-      }
-    });
+    if (_settingsController.settings.soundEnabled) {
+      _soundManager.playBgm(isHome: true);
+    }
   }
 
   @override
   void dispose() {
     _soundManager.stopBgm();
-    _soundManager.setEnabled(true); // 恢复默认bgm状态
     super.dispose();
   }
 
@@ -36,31 +36,41 @@ class _StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('抓痒痒游戏'),
+        title: Text('抓痒痒'),
         centerTitle: true,
         actions: [
-          AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            decoration: BoxDecoration(
-              color:
-                  _settings.soundEnabled ? Colors.blue[700] : Colors.grey[600],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: IconButton(
-              icon: AnimatedSwitcher(
-                duration: Duration(milliseconds: 200),
-                child: Icon(
-                  _settings.soundEnabled ? Icons.volume_up : Icons.volume_off,
-                  key: ValueKey<bool>(_settings.soundEnabled),
-                  color: Colors.white,
-                ),
+          Obx(
+            () => AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              decoration: BoxDecoration(
+                color:
+                    _settingsController.settings.soundEnabled
+                        ? Colors.blue[700]
+                        : Colors.grey[600],
+                borderRadius: BorderRadius.circular(20),
               ),
-              onPressed: () {
-                setState(() {
-                  _settings.soundEnabled = !_settings.soundEnabled;
-                  _soundManager.setEnabled(_settings.soundEnabled);
-                });
-              },
+              child: IconButton(
+                icon: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 200),
+                  child: Icon(
+                    _settingsController.settings.soundEnabled
+                        ? Icons.volume_up
+                        : Icons.volume_off,
+                    key: ValueKey<bool>(
+                      _settingsController.settings.soundEnabled,
+                    ),
+                    color: Colors.white,
+                  ),
+                ),
+                onPressed: () {
+                  _settingsController.toggleSound();
+                  if (_settingsController.settings.soundEnabled) {
+                    _soundManager.playBgm(isHome: true);
+                  } else {
+                    _soundManager.stopBgm();
+                  }
+                },
+              ),
             ),
           ),
         ],
@@ -91,7 +101,20 @@ class _StartScreenState extends State<StartScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.leaderboard),
+                      onPressed: () {
+                        SoundManager().playClick();
+                        Get.to(
+                          () => LeaderboardScreen(
+                            settings: _settingsController.settings,
+                          ),
+                        );
+                      },
+                    ),
                   ),
+                  Divider(height: 1),
+                  _buildPlayerNameInput(),
                   Divider(height: 1),
                   _buildDifficultySelector(),
                   Divider(height: 1),
@@ -100,6 +123,8 @@ class _StartScreenState extends State<StartScreen> {
                   _buildSwingToggle(),
                   Divider(height: 1),
                   _buildHintsToggle(),
+                  Divider(height: 1),
+                  _buildVibrationToggle(),
                 ],
               ),
             ),
@@ -116,18 +141,14 @@ class _StartScreenState extends State<StartScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       minimumSize: Size(double.infinity, 0),
+                      foregroundColor: Colors.white,
                     ),
                     onPressed: () async {
                       SoundManager().playClick();
-                      await _settings.saveSettings();
+                      await _settingsController.saveSettings();
                       Get.offNamed(
                         '/game',
-                        arguments: {
-                          'difficulty': _settings.difficulty,
-                          'duration': _settings.duration,
-                          'enableSwing': _settings.enableSwing,
-                          'enableHints': _settings.enableHints,
-                        },
+                        arguments: _settingsController.settings.toJson(),
                       );
                     },
                     child: Text(
@@ -135,6 +156,23 @@ class _StartScreenState extends State<StartScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () {
+                      SoundManager().playClick();
+                      Get.to(
+                        () =>
+                            RulesScreen(settings: _settingsController.settings),
+                      );
+                    },
+                    child: Text(
+                      '查看游戏规则',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.blue.shade700,
                       ),
                     ),
                   ),
@@ -148,64 +186,114 @@ class _StartScreenState extends State<StartScreen> {
   }
 
   Widget _buildDifficultySelector() {
-    return ListTile(
-      title: Text('难度选择'),
-      trailing: SegmentedButton(
-        segments: [
-          ButtonSegment(value: 0, label: Text('简单')),
-          ButtonSegment(value: 1, label: Text('中等')),
-          ButtonSegment(value: 2, label: Text('困难')),
-        ],
-        selected: {_settings.difficulty},
-        onSelectionChanged: (newSelection) {
-          setState(() {
-            _settings.difficulty = newSelection.first;
-          });
-        },
+    return Obx(
+      () => ListTile(
+        title: Text('难度选择'),
+        trailing: SegmentedButton<DifficultyLevel>(
+          segments: [
+            ButtonSegment(value: DifficultyLevel.easy, label: Text('简单')),
+            ButtonSegment(value: DifficultyLevel.medium, label: Text('中等')),
+            ButtonSegment(value: DifficultyLevel.hard, label: Text('困难')),
+          ],
+          selected: {_settingsController.settings.difficulty},
+          onSelectionChanged: (newSelection) {
+            _settingsController.setDifficulty(newSelection.first);
+          },
+        ),
       ),
     );
   }
 
   Widget _buildDurationSelector() {
-    return ListTile(
-      title: Text('游戏时长'),
-      trailing: SegmentedButton(
-        segments: [
-          ButtonSegment(value: '10秒', label: Text('10秒')),
-          ButtonSegment(value: '20秒', label: Text('20秒')),
-          ButtonSegment(value: '30秒', label: Text('30秒')),
-        ],
-        selected: {_settings.duration},
-        onSelectionChanged: (newSelection) {
-          setState(() {
-            _settings.duration = newSelection.first;
-          });
-        },
+    return Obx(
+      () => ListTile(
+        title: Text('游戏时长'),
+        trailing: SegmentedButton<double>(
+          segments: [
+            ButtonSegment(value: 10, label: Text('10秒')),
+            ButtonSegment(value: 20, label: Text('20秒')),
+            ButtonSegment(value: 30, label: Text('30秒')),
+          ],
+          selected: {_settingsController.settings.duration},
+          onSelectionChanged: (newSelection) {
+            _settingsController.setDuration(newSelection.first);
+          },
+        ),
       ),
     );
   }
 
   Widget _buildSwingToggle() {
-    return SwitchListTile(
-      title: Text('开启人物摆动'),
-      value: _settings.enableSwing,
-      onChanged: (value) {
-        setState(() {
-          _settings.enableSwing = value;
-        });
-      },
+    return Obx(
+      () => SwitchListTile(
+        title: Text('开启人物摆动'),
+        value: _settingsController.settings.enableSwing,
+        onChanged: _settingsController.setEnableSwing,
+      ),
     );
   }
 
   Widget _buildHintsToggle() {
-    return SwitchListTile(
-      title: Text('显示辅助提示'),
-      value: _settings.enableHints,
-      onChanged: (value) {
-        setState(() {
-          _settings.enableHints = value;
-        });
-      },
+    return Obx(
+      () => SwitchListTile(
+        title: Text('显示辅助提示'),
+        value: _settingsController.settings.enableHints,
+        onChanged: _settingsController.setEnableHints,
+      ),
+    );
+  }
+
+  Widget _buildVibrationToggle() {
+    return Obx(
+      () => SwitchListTile(
+        title: Text('开启振动反馈'),
+        value: _settingsController.settings.vibrationEnabled,
+        onChanged: _settingsController.setVibrationEnabled,
+      ),
+    );
+  }
+
+  Widget _buildPlayerNameInput() {
+    return Obx(
+      () => ListTile(
+        title: Text('玩家名称'),
+        trailing: SizedBox(
+          width: 150,
+          child: Padding(
+            padding: EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
+            child: TextField(
+              controller: TextEditingController(
+                text: _settingsController.settings.playerName,
+              ),
+              decoration: InputDecoration(
+                hintText: '输入昵称',
+                hintStyle: TextStyle(color: Colors.grey),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.blue, width: 2),
+                ),
+              ),
+              style: TextStyle(fontSize: 14),
+              cursorColor: Colors.blue,
+              onChanged: _settingsController.setPlayerName,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

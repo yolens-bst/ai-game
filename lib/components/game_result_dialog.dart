@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/game_result.dart';
+import '../models/game_settings.dart';
 import '../game/sound_manager.dart';
 
 class GameResultDialog extends StatefulWidget {
@@ -41,17 +42,29 @@ class _GameResultDialogState extends State<GameResultDialog> {
             ),
             const SizedBox(height: 20),
             _buildStatItem('总得分', '${widget.result.totalScore}分'),
+            _buildStatItem(
+              '难度级别',
+              _getDifficultyText(widget.result.settings.difficulty),
+            ),
             _buildStatItem('正确点击', '${widget.result.correctTaps}次'),
             _buildStatItem('错误点击', '${widget.result.wrongTaps}次'),
             _buildStatItem(
-                '准确率', '${(widget.result.accuracy * 100).toStringAsFixed(1)}%'),
+              '准确率',
+              '${(widget.result.accuracy * 100).toStringAsFixed(2)}%',
+            ),
             _buildStatItem('精准点击', '${widget.result.preciseHits}次'),
             _buildStatItem(
-                '最快反应', '${widget.result.fastestResponse.toStringAsFixed(2)}秒'),
+              '最快反应',
+              '${widget.result.fastestResponse.toStringAsFixed(4)}秒',
+            ),
             _buildStatItem(
-                '最慢反应', '${widget.result.slowestResponse.toStringAsFixed(2)}秒'),
+              '最慢反应',
+              '${widget.result.slowestResponse.toStringAsFixed(4)}秒',
+            ),
             _buildStatItem(
-                '平均反应', '${widget.result.averageResponse.toStringAsFixed(2)}秒'),
+              '平均反应',
+              '${widget.result.averageResponse.toStringAsFixed(4)}秒',
+            ),
             const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -88,6 +101,19 @@ class _GameResultDialogState extends State<GameResultDialog> {
     );
   }
 
+  String _getDifficultyText(DifficultyLevel difficulty) {
+    switch (difficulty) {
+      case DifficultyLevel.easy:
+        return '简单';
+      case DifficultyLevel.medium:
+        return '中等';
+      case DifficultyLevel.hard:
+        return '困难';
+      default:
+        return '未知';
+    }
+  }
+
   Widget _buildStatItem(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -95,9 +121,10 @@ class _GameResultDialogState extends State<GameResultDialog> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(fontSize: 16)),
-          Text(value,
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );

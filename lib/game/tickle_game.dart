@@ -2,6 +2,7 @@ import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flame/events.dart';
+import '../models/game_settings.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as material;
@@ -10,6 +11,7 @@ import 'package:vector_math/vector_math_64.dart';
 import 'package:get/get.dart';
 import '../models/game_result.dart';
 import 'combo_system.dart';
+import '../controllers/leaderboard_controller.dart';
 import '../components/game_result_dialog.dart';
 import 'character_renderer.dart';
 import 'game_ui_renderer.dart';
@@ -27,18 +29,10 @@ class Circle {
 }
 
 class TickleGame extends FlameGame with TapCallbacks {
-  final int difficulty;
-  final bool enableSwing;
-  final bool enableHints;
-  final double totalGameTime;
+  final GameSettings settings;
   final SoundManager _soundManager = SoundManager();
 
-  TickleGame({
-    required this.difficulty,
-    required this.enableSwing,
-    required this.enableHints,
-    required this.totalGameTime,
-  });
+  TickleGame({required this.settings});
 
   // 游戏状态
   GameState gameState = GameState.waiting;
@@ -95,7 +89,7 @@ class TickleGame extends FlameGame with TapCallbacks {
       eyeOffset: eyeOffset,
       eyeOpenness: eyeOpenness,
       mouthOpenness: mouthOpenness,
-      enableHints: enableHints,
+      enableHints: settings.enableHints,
       currentTarget: currentTarget ?? BodyPart.head,
     );
 
@@ -122,7 +116,7 @@ class TickleGame extends FlameGame with TapCallbacks {
 
   void startGame() {
     _initUIRenderer();
-    gameTimeLeft = totalGameTime;
+    gameTimeLeft = settings.duration;
     score = 0;
     correctTaps = 0;
     wrongTaps = 0;
@@ -147,7 +141,7 @@ class TickleGame extends FlameGame with TapCallbacks {
   void _initUIRenderer() {
     gameUIRenderer = GameUIRenderer(
       width: size.x,
-      difficulty: difficulty,
+      difficulty: settings.difficulty,
       gameTimeLeft: gameTimeLeft,
       questionTimeLeft: questionTimeLeft,
       score: score,
@@ -157,18 +151,30 @@ class TickleGame extends FlameGame with TapCallbacks {
 
   void _initBodyParts() {
     bodyParts = {
-      BodyPart.head:
-          Circle(center: characterAnchor + Vector2(0, -90), radius: 60),
-      BodyPart.belly:
-          Circle(center: characterAnchor + Vector2(0, 50), radius: 70),
-      BodyPart.leftHand:
-          Circle(center: characterAnchor + Vector2(-120, 20), radius: 30),
-      BodyPart.rightHand:
-          Circle(center: characterAnchor + Vector2(120, 20), radius: 30),
-      BodyPart.leftFoot:
-          Circle(center: characterAnchor + Vector2(-50, 180), radius: 30),
-      BodyPart.rightFoot:
-          Circle(center: characterAnchor + Vector2(50, 180), radius: 30),
+      BodyPart.head: Circle(
+        center: characterAnchor + Vector2(0, -90),
+        radius: 60,
+      ),
+      BodyPart.belly: Circle(
+        center: characterAnchor + Vector2(0, 50),
+        radius: 70,
+      ),
+      BodyPart.leftHand: Circle(
+        center: characterAnchor + Vector2(-120, 20),
+        radius: 30,
+      ),
+      BodyPart.rightHand: Circle(
+        center: characterAnchor + Vector2(120, 20),
+        radius: 30,
+      ),
+      BodyPart.leftFoot: Circle(
+        center: characterAnchor + Vector2(-50, 180),
+        radius: 30,
+      ),
+      BodyPart.rightFoot: Circle(
+        center: characterAnchor + Vector2(50, 180),
+        radius: 30,
+      ),
     };
   }
 
@@ -189,9 +195,10 @@ class TickleGame extends FlameGame with TapCallbacks {
 
     currentTarget = newTarget;
 
-    questionTimeLeft = difficulty == 0
-        ? 5
-        : difficulty == 1
+    questionTimeLeft =
+        settings.difficulty == DifficultyLevel.easy
+            ? 5
+            : settings.difficulty == DifficultyLevel.medium
             ? 3
             : 2;
   }
@@ -202,22 +209,29 @@ class TickleGame extends FlameGame with TapCallbacks {
     // 过滤掉无效响应时间(<=0)
     final validResponseTimes = responseTimes.where((t) => t > 0).toList();
     final result = GameResult(
-        totalScore: score,
-        fastestResponse:
-            validResponseTimes.isNotEmpty ? validResponseTimes.reduce(min) : 0,
-        slowestResponse:
-            validResponseTimes.isNotEmpty ? validResponseTimes.reduce(max) : 0,
-        averageResponse: validResponseTimes.isNotEmpty
-            ? validResponseTimes.reduce((a, b) => a + b) /
-                validResponseTimes.length
-            : 0,
-        isSuccess: score >= 5,
-        correctTaps: correctTaps,
-        wrongTaps: wrongTaps,
-        accuracy: correctTaps + wrongTaps > 0
-            ? correctTaps / (correctTaps + wrongTaps)
-            : 0,
-        preciseHits: preciseHits);
+      totalScore: score,
+      fastestResponse:
+          validResponseTimes.isNotEmpty ? validResponseTimes.reduce(min) : 0,
+      slowestResponse:
+          validResponseTimes.isNotEmpty ? validResponseTimes.reduce(max) : 0,
+      averageResponse:
+          validResponseTimes.isNotEmpty
+              ? validResponseTimes.reduce((a, b) => a + b) /
+                  validResponseTimes.length
+              : 0,
+      isSuccess: score >= 5,
+      correctTaps: correctTaps,
+      wrongTaps: wrongTaps,
+      accuracy:
+          correctTaps + wrongTaps > 0
+              ? correctTaps / (correctTaps + wrongTaps)
+              : 0,
+      preciseHits: preciseHits,
+      settings: settings,
+    );
+
+    // 保存游戏结果到排行榜
+    LeaderboardController.to.addGameResult(result);
 
     Get.dialog(
       GameResultDialog(result: result),
@@ -280,14 +294,14 @@ class TickleGame extends FlameGame with TapCallbacks {
       eyeOffset: eyeOffset,
       eyeOpenness: eyeOpenness,
       mouthOpenness: mouthOpenness,
-      enableHints: enableHints,
+      enableHints: settings.enableHints,
       currentTarget: currentTarget ?? BodyPart.head,
     );
 
     // 更新UI渲染器状态
     gameUIRenderer = GameUIRenderer(
       width: size.x,
-      difficulty: difficulty,
+      difficulty: settings.difficulty,
       gameTimeLeft: gameTimeLeft,
       questionTimeLeft: questionTimeLeft,
       score: score,
@@ -296,7 +310,7 @@ class TickleGame extends FlameGame with TapCallbacks {
   }
 
   void _updateAnimations(double dt) {
-    if (!enableSwing) return;
+    if (!settings.enableSwing) return;
 
     if (!isBlinking && _random.nextDouble() < 0.005) {
       isBlinking = true;
@@ -364,17 +378,20 @@ class TickleGame extends FlameGame with TapCallbacks {
 
           // 添加得分动画 (从点击位置开始)
           gameUIRenderer.addScoreAnimation(
-              points, Offset(touchPos.x, touchPos.y));
+            points,
+            Offset(touchPos.x, touchPos.y),
+          );
 
           // 记录精准点击 (距离小于半径1/3)
           if (distance < circle.radius / 3) {
             preciseHits++;
           }
 
-          responseTimes.add(questionTimeLeft);
+          responseTimes.add(startQuestionTime - questionTimeLeft);
           _nextQuestion();
         } else {
           wrongTaps++;
+          gameTimeLeft -= 2;
           SoundManager().playWrong();
           _nextQuestion();
         }

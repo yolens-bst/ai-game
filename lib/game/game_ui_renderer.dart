@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'dart:math' as math;
 import '../game/tickle_game.dart';
+import '../models/game_settings.dart';
 import 'effects/effect_layer.dart';
 import 'effects/score_effect.dart';
-import 'sound_manager.dart';
 
 class GameUIRenderer {
   final double width;
   final int score;
   final double questionTimeLeft;
   final double gameTimeLeft;
-  final int difficulty;
+  final DifficultyLevel difficulty;
   final BodyPart? targetBodyPart;
   final EffectLayer effectLayer = EffectLayer();
 
@@ -46,46 +46,53 @@ class GameUIRenderer {
     canvas.restore();
   }
 
-  void onButtonPressed() {
-    SoundManager().playClick();
-  }
-
   void _drawGameInfo(Canvas canvas) {
-    final textStyle =
-        material.TextStyle(color: material.Colors.black, fontSize: 18);
+    final textStyle = material.TextStyle(
+      color: material.Colors.black,
+      fontSize: 18,
+    );
     const infoHeight = 40.0;
     const progressRadius = 20.0;
 
     // 绘制分数（左上角）
     final scoreText = material.TextSpan(text: '分数: $score', style: textStyle);
     final scorePainter = material.TextPainter(
-        text: scoreText, textDirection: material.TextDirection.ltr);
+      text: scoreText,
+      textDirection: material.TextDirection.ltr,
+    );
     scorePainter.layout();
     scorePainter.paint(
-        canvas, Offset(20, (infoHeight - scorePainter.height) / 2));
+      canvas,
+      Offset(20, (infoHeight - scorePainter.height) / 2),
+    );
 
     // 绘制环形进度条（中间）
     final centerX = width / 2;
-    final progress = questionTimeLeft /
-        (difficulty == 0
-            ? 7
-            : difficulty == 1
-                ? 5
-                : 3);
-    final color = material.Color.lerp(
-      material.Colors.red,
-      material.Colors.blue,
-      progress,
-    )!;
+    final progress =
+        questionTimeLeft /
+        (difficulty == DifficultyLevel.easy
+            ? 5
+            : difficulty == DifficultyLevel.medium
+            ? 3
+            : 2);
+    final color =
+        material.Color.lerp(
+          material.Colors.redAccent,
+          material.Colors.blue,
+          progress,
+        )!;
 
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4;
+    final paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 4;
 
     canvas.drawArc(
       Rect.fromCircle(
-          center: Offset(centerX, infoHeight / 2 + 5), radius: progressRadius),
+        center: Offset(centerX, infoHeight / 2 + 5),
+        radius: progressRadius,
+      ),
       -math.pi / 2,
       2 * math.pi * progress,
       false,
@@ -94,26 +101,39 @@ class GameUIRenderer {
 
     // 在进度条中间显示剩余时间
     final timeText = material.TextSpan(
-        text: '${questionTimeLeft.toInt()}s',
-        style: textStyle.copyWith(fontSize: 14));
+      text: '${questionTimeLeft.toStringAsFixed(1)}s',
+      style: textStyle.copyWith(fontSize: 14),
+    );
     final timePainter = material.TextPainter(
-        text: timeText, textDirection: material.TextDirection.ltr);
+      text: timeText,
+      textDirection: material.TextDirection.ltr,
+    );
     timePainter.layout();
     timePainter.paint(
-        canvas,
-        Offset(centerX - timePainter.width / 2,
-            infoHeight / 2 - timePainter.height / 2 + 5));
+      canvas,
+      Offset(
+        centerX - timePainter.width / 2,
+        infoHeight / 2 - timePainter.height / 2 + 5,
+      ),
+    );
 
     // 绘制总时间（右上角）
     final totalTimeText = material.TextSpan(
-        text: '剩余: ${gameTimeLeft.toInt()}s', style: textStyle);
+      text: '剩余: ${gameTimeLeft.toInt()}s',
+      style: textStyle,
+    );
     final totalTimePainter = material.TextPainter(
-        text: totalTimeText, textDirection: material.TextDirection.ltr);
+      text: totalTimeText,
+      textDirection: material.TextDirection.ltr,
+    );
     totalTimePainter.layout();
     totalTimePainter.paint(
-        canvas,
-        Offset(width - totalTimePainter.width - 20,
-            (infoHeight - totalTimePainter.height) / 2));
+      canvas,
+      Offset(
+        width - totalTimePainter.width - 20,
+        (infoHeight - totalTimePainter.height) / 2,
+      ),
+    );
   }
 
   void _drawTargetPart(Canvas canvas) {

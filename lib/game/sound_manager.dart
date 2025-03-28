@@ -2,11 +2,29 @@ import 'package:just_audio/just_audio.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import '../controllers/game_settings_controller.dart';
 
 class SoundManager {
   static final SoundManager _instance = SoundManager._internal();
   factory SoundManager() => _instance;
-  SoundManager._internal();
+  SoundManager._internal() {
+    _initSettings();
+  }
+
+  void _initSettings() {
+    final settings = Get.find<GameSettingsController>();
+    _enabled = settings.settings.soundEnabled;
+    settings.soundEnabled.listen((enabled) {
+      _enabled = enabled;
+      print({"name": _initSettings, "_enabled": _enabled});
+      if (!_enabled) {
+        _bgmPlayer.stop();
+        _sfxPlayer.stop();
+      }
+    });
+  }
 
   final AudioPlayer _bgmPlayer = AudioPlayer();
   final AudioPlayer _sfxPlayer = AudioPlayer();
@@ -14,6 +32,9 @@ class SoundManager {
   double _volume = 0.7;
 
   Future<void> init() async {
+    // 确保GetStorage和设置控制器已初始化
+    await GetStorage.init();
+    await Get.putAsync(() => GameSettingsController().init());
     // Preload sounds
     await _bgmPlayer.setAsset('assets/sounds/bgm.mp3');
     await _bgmPlayer.setAsset('assets/sounds/home-bgm.mp3');
@@ -145,15 +166,6 @@ class SoundManager {
     for (int i = steps; i >= 0; i--) {
       await Future.delayed(Duration(milliseconds: (duration * 1000 ~/ steps)));
       await _bgmPlayer.setVolume(currentVolume * i / steps);
-    }
-  }
-
-  void setEnabled(bool enabled) {
-    _enabled = enabled;
-    if (!enabled) {
-      _bgmPlayer.stop();
-    } else {
-      playBgm();
     }
   }
 }
