@@ -19,6 +19,9 @@ class _StartScreenState extends State<StartScreen> {
     _settings.init().then((_) {
       _soundManager.setEnabled(_settings.soundEnabled);
       setState(() {});
+      if (_settings.soundEnabled) {
+        _soundManager.playBgm(isHome: true);
+      }
     });
   }
 
@@ -56,11 +59,6 @@ class _StartScreenState extends State<StartScreen> {
                 setState(() {
                   _settings.soundEnabled = !_settings.soundEnabled;
                   _soundManager.setEnabled(_settings.soundEnabled);
-                  if (_settings.soundEnabled) {
-                    _soundManager.playBgm(isHome: true);
-                  } else {
-                    _soundManager.stopBgm();
-                  }
                 });
               },
             ),
@@ -72,10 +70,7 @@ class _StartScreenState extends State<StartScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue.shade100,
-              Colors.white,
-            ],
+            colors: [Colors.blue.shade100, Colors.white],
           ),
         ),
         child: ListView(
@@ -125,12 +120,15 @@ class _StartScreenState extends State<StartScreen> {
                     onPressed: () async {
                       SoundManager().playClick();
                       await _settings.saveSettings();
-                      Get.offNamed('/game', arguments: {
-                        'difficulty': _settings.difficulty,
-                        'duration': _settings.duration,
-                        'enableSwing': _settings.enableSwing,
-                        'enableHints': _settings.enableHints,
-                      });
+                      Get.offNamed(
+                        '/game',
+                        arguments: {
+                          'difficulty': _settings.difficulty,
+                          'duration': _settings.duration,
+                          'enableSwing': _settings.enableSwing,
+                          'enableHints': _settings.enableHints,
+                        },
+                      );
                     },
                     child: Text(
                       '开始游戏',

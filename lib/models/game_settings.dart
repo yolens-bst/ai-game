@@ -11,7 +11,7 @@ class GameSettings {
   String _duration = '30秒';
   bool _enableSwing = true;
   bool _enableHints = false;
-  bool _soundEnabled = false;
+  bool _soundEnabled = true;
 
   int get difficulty => _difficulty;
   String get duration => _duration;

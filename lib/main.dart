@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:flame/game.dart';
 import 'game/tickle_game.dart';
 import 'screens/start_screen.dart';
+import 'package:just_audio/just_audio.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

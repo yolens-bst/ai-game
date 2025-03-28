@@ -112,12 +112,14 @@ class SoundManager {
 
   Future<void> playBgm({bool isHome = false}) async {
     if (!_enabled) return;
+    await _bgmPlayer.setLoopMode(LoopMode.one);
     try {
       await _bgmPlayer.setVolume(0);
       await _bgmPlayer.setAsset(
-          isHome ? 'assets/sounds/home-bgm.mp3' : 'assets/sounds/bgm.mp3');
+        isHome ? 'assets/sounds/home-bgm.mp3' : 'assets/sounds/bgm.mp3',
+      );
       await _bgmPlayer.play();
-      await _fadeIn();
+      await _fadeIn(duration: 1.0);
     } catch (e) {
       print('Error playing BGM: $e');
     }
@@ -125,6 +127,7 @@ class SoundManager {
 
   Future<void> stopBgm() async {
     // await _fadeOut();
+    await _bgmPlayer.setLoopMode(LoopMode.off);
     await _bgmPlayer.stop();
   }
 
