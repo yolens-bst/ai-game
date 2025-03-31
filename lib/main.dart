@@ -10,12 +10,35 @@ import 'package:just_audio/just_audio.dart';
 import 'models/game_settings.dart';
 import 'controllers/game_settings_controller.dart';
 import 'controllers/leaderboard_controller.dart';
+import 'package:flutter/services.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   Get.put(GameSettingsController());
   Get.put(LeaderboardController());
+
+  // Set window size to 860x720 and disable resizing
+  if (GetPlatform.isDesktop) {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    await SystemChrome.setApplicationSwitcherDescription(
+      ApplicationSwitcherDescription(
+        label: 'appTitle'.tr,
+        primaryColor: Colors.blue.value,
+      ),
+    );
+    // Set fixed window size for desktop
+    await WindowManager.instance.ensureInitialized();
+    await WindowManager.instance.setSize(const Size(860, 720));
+    await WindowManager.instance.setResizable(false);
+    await WindowManager.instance.setMinimumSize(const Size(860, 720));
+    await WindowManager.instance.setMaximumSize(const Size(860, 720));
+  }
   runApp(MyApp());
 }
 

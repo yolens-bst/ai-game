@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../game/sound_manager.dart';
 import '../models/game_settings.dart';
@@ -76,116 +77,118 @@ class StartScreenState extends State<StartScreen> {
           ),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade100, Colors.white],
+      body: Stack(
+        children: [
+          SvgPicture.asset(
+            'assets/images/hill.svg',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
           ),
-        ),
-        child: ListView(
-          padding: EdgeInsets.all(16),
-          children: [
-            Card(
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  ListTile(
-                    title: Text(
-                      'gameSettings'.tr,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+          ListView(
+            padding: EdgeInsets.all(16),
+            children: [
+              Card(
+                elevation: 8,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text(
+                        'gameSettings'.tr,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.leaderboard),
+                        onPressed: () {
+                          SoundManager().playClick();
+                          Get.to(
+                            () => LeaderboardScreen(
+                              settings: _settingsController.settings,
+                            ),
+                          );
+                        },
                       ),
                     ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.leaderboard),
+                    Divider(height: 1),
+                    _buildPlayerNameInput(),
+                    Divider(height: 1),
+                    _buildLanguageSelector(),
+                    Divider(height: 1),
+                    _buildDifficultySelector(),
+                    Divider(height: 1),
+                    _buildDurationSelector(),
+                    Divider(height: 1),
+                    _buildSwingToggle(),
+                    Divider(height: 1),
+                    _buildHintsToggle(),
+                    // Divider(height: 1),
+                    // _buildVibrationToggle(),
+                  ],
+                ),
+              ),
+              SizedBox(height: 32),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(double.infinity, 50),
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blue,
+                        elevation: 8,
+                      ),
+                      onPressed: () async {
+                        SoundManager().playClick();
+                        await _settingsController.saveSettings();
+                        Get.offNamed(
+                          '/game',
+                          arguments: _settingsController.settings.toJson(),
+                        );
+                      },
+                      child: Text(
+                        'startGame'.tr,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        minimumSize: Size(double.infinity, 50),
+                        // foregroundColor: Colors.white,
+                      ),
                       onPressed: () {
                         SoundManager().playClick();
                         Get.to(
-                          () => LeaderboardScreen(
+                          () => RulesScreen(
                             settings: _settingsController.settings,
                           ),
                         );
                       },
-                    ),
-                  ),
-                  Divider(height: 1),
-                  _buildPlayerNameInput(),
-                  Divider(height: 1),
-                  _buildLanguageSelector(),
-                  Divider(height: 1),
-                  _buildDifficultySelector(),
-                  Divider(height: 1),
-                  _buildDurationSelector(),
-                  Divider(height: 1),
-                  _buildSwingToggle(),
-                  Divider(height: 1),
-                  _buildHintsToggle(),
-                  Divider(height: 1),
-                  _buildVibrationToggle(),
-                ],
-              ),
-            ),
-            SizedBox(height: 32),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, 50),
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.blue,
-                      elevation: 8,
-                    ),
-                    onPressed: () async {
-                      SoundManager().playClick();
-                      await _settingsController.saveSettings();
-                      Get.offNamed(
-                        '/game',
-                        arguments: _settingsController.settings.toJson(),
-                      );
-                    },
-                    child: Text(
-                      'startGame'.tr,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                      child: Text(
+                        'viewRules'.tr,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 16),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      minimumSize: Size(double.infinity, 50),
-                      foregroundColor: Colors.blue,
-                    ),
-                    onPressed: () {
-                      SoundManager().playClick();
-                      Get.to(
-                        () =>
-                            RulesScreen(settings: _settingsController.settings),
-                      );
-                    },
-                    child: Text(
-                      'viewRules'.tr,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }

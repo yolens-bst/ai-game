@@ -5,7 +5,7 @@ class Languages extends Translations {
   Map<String, Map<String, String>> get keys => {'zh_CN': zhCN, 'en_US': enUS};
 
   static final Map<String, String> zhCN = {
-    'appTitle': '挠痒痒游戏',
+    'appTitle': '挠痒痒',
     'startGame': '开始游戏',
     'gameRules': '游戏规则',
     'leaderboard': '排行榜',
@@ -84,7 +84,7 @@ class Languages extends Translations {
   };
 
   static final Map<String, String> enUS = {
-    'appTitle': 'Tickle Game',
+    'appTitle': 'Tickle',
     'startGame': 'Start Game',
     'gameRules': 'Game Rules',
     'leaderboard': 'Leaderboard',

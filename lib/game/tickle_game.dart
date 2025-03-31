@@ -2,6 +2,7 @@ import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flame/events.dart';
+import 'package:flame_svg/flame_svg.dart';
 import '../models/game_settings.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -82,6 +83,28 @@ class TickleGame extends FlameGame with TapCallbacks {
     camera.viewfinder.visibleGameSize = Vector2(size.x, size.y);
     camera.viewfinder.position = Vector2(size.x / 2, size.y / 2);
     camera.viewfinder.anchor = Anchor.center;
+
+    // 添加背景图片
+    // final sprite = await loadSvg('hill.svg');
+    // final scale = max(size.x / sprite.pixelRatio, size.y / sprite.srcSize.y);
+    final background = SvgComponent(
+      svg: await loadSvg('images/hill.svg'),
+      size: size,
+      priority: -10,
+      position: size / 2,
+      anchor: Anchor.center,
+    );
+
+    // 计算缩放比例，确保适配屏幕但不变形
+    final double scaleX = size.x / background.width;
+    final double scaleY = size.y / background.height;
+    final double scale = scaleX < scaleY ? scaleX : scaleY; // 选择较小的缩放比例，保持比例不变形
+
+    background.scale = Vector2.all(scale * 1.2);
+    background.position = size / 2; // 居中
+    background.anchor = Anchor.center;
+    background.setOpacity(0.5);
+    add(background);
 
     characterRenderer = CharacterRenderer(
       game: this,
@@ -402,14 +425,14 @@ class TickleGame extends FlameGame with TapCallbacks {
           responseTimes.add(startQuestionTime - questionTimeLeft);
           _nextQuestion();
         } else {
+          wrongTaps++;
+          SoundManager().playWrong();
           if (settings.duration == double.infinity) {
             gameState = GameState.gameOver;
             endGame();
           } else {
-            wrongTaps++;
             int desscore = settings.duration == 10 ? 1 : 2;
             gameTimeLeft -= desscore;
-            SoundManager().playWrong();
             _nextQuestion();
           }
         }

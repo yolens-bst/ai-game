@@ -17,13 +17,33 @@ dependencies:
   just_audio_windows: ^0.2.2
   get_storage: ^2.1.1
   lottie: ^3.3.1
+  flame_svg: ^1.10.0
+  flutter_svg: ^2.0.10+1
+  window_manager: ^0.4.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/sounds/
+    - assets/lotties/
+  
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo.png"
+  web:
+    image_path: "assets/images/logo.png"
+    generate: true
+  windows:
+    image_path: "assets/images/logo.png"
+    generate: true
   uses-material-design: true
   assets:
     - assets/images/

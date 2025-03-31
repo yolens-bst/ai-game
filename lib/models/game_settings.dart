@@ -27,7 +27,7 @@ class GameSettings {
     this.difficulty = DifficultyLevel.medium,
     this.duration = double.infinity,
     this.enableSwing = true,
-    this.enableHints = true,
+    this.enableHints = false,
     this.soundEnabled = true,
     this.vibrationEnabled = true,
     this.playerName = 'Player',
