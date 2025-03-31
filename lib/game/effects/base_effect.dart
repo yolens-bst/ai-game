@@ -15,8 +15,6 @@ abstract class BaseEffect extends Component {
   @override
   void render(Canvas canvas) {
     if (isExpired) return;
-    debugPrint('渲染特效: ${runtimeType}');
-
     renderEffect(canvas);
   }
 

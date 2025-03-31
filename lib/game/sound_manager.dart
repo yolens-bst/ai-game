@@ -18,7 +18,6 @@ class SoundManager {
     _enabled = settings.settings.soundEnabled;
     settings.soundEnabled.listen((enabled) {
       _enabled = enabled;
-      print({"name": _initSettings, "_enabled": _enabled});
       if (!_enabled) {
         _bgmPlayer.stop();
         _sfxPlayer.stop();

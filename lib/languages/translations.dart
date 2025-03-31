@@ -11,20 +11,6 @@ class Languages extends Translations {
     'leaderboard': '排行榜',
     'settings': '设置',
     'exitGame': '退出游戏',
-    'gameRulesTitle': '抓痒痒游戏规则',
-    'gameRulesContent':
-        '1. 游戏目标：在规定时间内尽可能多地点击出现的痒痒点\n'
-        '2. 难度说明：\n'
-        '   - 简单：痒痒点移动速度慢，出现频率低\n'
-        '   - 中等：痒痒点移动速度中等，出现频率中等\n'
-        '   - 困难：痒痒点移动速度快，出现频率高\n'
-        '3. 计分规则：\n'
-        '   - 每次点击正确位置得10分\n'
-        '   - 连续点击正确可获得连击加分\n'
-        '4. 游戏时长：10秒/20秒/30秒可选\n'
-        '5. 特殊效果：\n'
-        '   - 开启人物摆动会增加游戏难度\n'
-        '   - 显示辅助提示会帮助定位痒痒点',
     // Game Stats
     'scoreLabel': '得分',
     'timeLeftLabel': '剩余时间',
@@ -75,6 +61,26 @@ class Languages extends Translations {
     'rightFootPart': '右脚',
     'challengeSuccess': '挑战成功!',
     'challengeFailure': '挑战失败',
+    'endlessMode': '无尽模式',
+    // Rules Screen
+    'gameObjective': '游戏目标',
+    'gameModes': '游戏模式',
+    'scoringRules': '得分规则',
+    'difficultyLevels': '难度级别',
+    'specialEffects': '特殊效果',
+    'gameObjectiveDesc': '在规定时间内尽可能多地点击出现的痒痒点',
+    'normalModeDesc': '普通模式: 限时挑战(10/30秒可选)',
+    'endlessModeDesc': '无尽模式: 持续挑战直到错误点击',
+    'baseScoreDesc': '基础得分: 每次正确点击获得10分',
+    'precisionBonusDesc': '精准加成: 点击越接近中心得分越高(最高15分)',
+    'comboSystemDesc': '连击系统: 连续正确点击可获得连击倍数(最高5倍)',
+    'easyModeDesc': '简单: 目标移动慢,出现频率低,反应时间5秒',
+    'mediumModeDesc': '中等: 目标移动中等,出现频率中等,反应时间3秒',
+    'hardModeDesc': '困难: 目标移动快,出现频率高,反应时间2秒',
+    'characterSwingDesc': '人物摆动: 增加游戏难度',
+    'hintSystemDesc': '辅助提示: 高亮显示当前目标部位',
+    'vibrationFeedbackDesc': '震动反馈: 增强游戏体验',
+    'enjoyGameText': '祝您游戏愉快!',
   };
 
   static final Map<String, String> enUS = {
@@ -84,20 +90,6 @@ class Languages extends Translations {
     'leaderboard': 'Leaderboard',
     'settings': 'Settings',
     'exitGame': 'Exit Game',
-    'gameRulesTitle': 'Tickle Game Rules',
-    'gameRulesContent':
-        '1. Game Objective: Click as many tickle spots as possible within the time limit\n'
-        '2. Difficulty Levels:\n'
-        '   - Easy: Slow moving spots, low frequency\n'
-        '   - Medium: Moderate speed and frequency\n'
-        '   - Hard: Fast moving spots, high frequency\n'
-        '3. Scoring Rules:\n'
-        '   - 10 points per correct click\n'
-        '   - Combo bonus for consecutive hits\n'
-        '4. Game Duration: 10s/20s/30s options\n'
-        '5. Special Effects:\n'
-        '   - Character wobble increases difficulty\n'
-        '   - Visual hints help locate tickle spots',
     // Game Stats
     'scoreLabel': 'Score',
     'timeLeftLabel': 'Time Left',
@@ -148,5 +140,30 @@ class Languages extends Translations {
     'rightFootPart': 'Right Foot',
     'challengeSuccess': 'Challenge Success!',
     'challengeFailure': 'Challenge Failed',
+    'endlessMode': 'Endless Mode',
+    // Rules Screen
+    'gameObjective': 'Game Objective',
+    'gameModes': 'Game Modes',
+    'scoringRules': 'Scoring Rules',
+    'difficultyLevels': 'Difficulty Levels',
+    'specialEffects': 'Special Effects',
+    'gameObjectiveDesc':
+        'Click as many tickle spots as possible within the time limit',
+    'normalModeDesc': 'Normal Mode: Timed challenge (10/30 seconds options)',
+    'endlessModeDesc': 'Endless Mode: Continuous challenge until wrong tap',
+    'baseScoreDesc': 'Base Score: 10 points per correct tap',
+    'precisionBonusDesc':
+        'Precision Bonus: More points for center hits (up to 15 points)',
+    'comboSystemDesc':
+        'Combo System: Multiplier for consecutive hits (up to 5x)',
+    'easyModeDesc':
+        'Easy: Slow moving targets, low frequency, 5s reaction time',
+    'mediumModeDesc': 'Medium: Moderate speed and frequency, 3s reaction time',
+    'hardModeDesc':
+        'Hard: Fast moving targets, high frequency, 2s reaction time',
+    'characterSwingDesc': 'Character Swing: Increases difficulty',
+    'hintSystemDesc': 'Hint System: Highlights current target area',
+    'vibrationFeedbackDesc': 'Vibration Feedback: Enhances gameplay',
+    'enjoyGameText': 'Enjoy the game!',
   };
 }

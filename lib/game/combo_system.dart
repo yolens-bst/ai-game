@@ -19,6 +19,11 @@ class ComboSystem {
               const Duration(seconds: 1)) {
         _currentCombo++;
         SoundManager().playCombo(_currentCombo);
+        // 触发combo特效
+        TickleGame.instance.gameUIRenderer.addComboAnimation(
+          _currentCombo,
+          Offset(TickleGame.instance.size.x * 0.4, 100),
+        );
       } else {
         _currentCombo = 1;
       }
@@ -31,7 +36,7 @@ class ComboSystem {
   }
 
   void _updateMultiplier() {
-    _comboMultiplier = 1.0 + (_currentCombo ~/ 5) * 0.3;
+    _comboMultiplier = 1.0 + (_currentCombo ~/ 3) * 0.3;
   }
 
   void reset() {

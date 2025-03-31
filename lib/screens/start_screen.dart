@@ -138,13 +138,10 @@ class StartScreenState extends State<StartScreen> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade600,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      minimumSize: Size(double.infinity, 0),
+                      minimumSize: Size(double.infinity, 50),
                       foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue,
+                      elevation: 8,
                     ),
                     onPressed: () async {
                       SoundManager().playClick();
@@ -164,6 +161,10 @@ class StartScreenState extends State<StartScreen> {
                   ),
                   SizedBox(height: 16),
                   TextButton(
+                    style: TextButton.styleFrom(
+                      minimumSize: Size(double.infinity, 50),
+                      foregroundColor: Colors.blue,
+                    ),
                     onPressed: () {
                       SoundManager().playClick();
                       Get.to(
@@ -174,8 +175,9 @@ class StartScreenState extends State<StartScreen> {
                     child: Text(
                       'viewRules'.tr,
                       style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.blue.shade700,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
@@ -238,8 +240,11 @@ class StartScreenState extends State<StartScreen> {
         trailing: SegmentedButton<double>(
           segments: [
             ButtonSegment(value: 10, label: Text('10seconds'.tr)),
-            ButtonSegment(value: 20, label: Text('20seconds'.tr)),
             ButtonSegment(value: 30, label: Text('30seconds'.tr)),
+            ButtonSegment(
+              value: double.infinity,
+              label: Text('endlessMode'.tr),
+            ),
           ],
           selected: {_settingsController.settings.duration},
           onSelectionChanged: (newSelection) {

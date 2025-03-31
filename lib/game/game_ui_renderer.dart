@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart' as material;
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:tickle_game/game/character_renderer.dart';
 import 'dart:ui';
 import 'dart:math' as math;
 import '../game/tickle_game.dart';
 import '../models/game_settings.dart';
 import 'effects/effect_layer.dart';
 import 'effects/score_effect.dart';
+import 'effects/combo_effect.dart';
 
 class GameUIRenderer {
   final double width;
@@ -16,6 +18,7 @@ class GameUIRenderer {
   final DifficultyLevel difficulty;
   final BodyPart? targetBodyPart;
   final EffectLayer effectLayer = EffectLayer();
+  final FaceDirection faceDirection;
 
   GameUIRenderer({
     required this.width,
@@ -24,11 +27,18 @@ class GameUIRenderer {
     required this.gameTimeLeft,
     required this.difficulty,
     this.targetBodyPart,
+    this.faceDirection = FaceDirection.front,
   });
 
   void addScoreAnimation(int score, Offset position) {
     if (score > 0) {
       effectLayer.addEffect(ScoreEffect(score, position));
+    }
+  }
+
+  void addComboAnimation(int combo, Offset position) {
+    if (combo > 1) {
+      effectLayer.addEffect(ComboEffect(combo, position));
     }
   }
 
@@ -58,7 +68,7 @@ class GameUIRenderer {
 
     // 绘制分数（左上角）
     final scoreText = material.TextSpan(
-      text: 'scoreLabel'.tr + ': $score',
+      text: '${'scoreLabel'.tr}: $score',
       style: textStyle,
     );
     final scorePainter = material.TextPainter(
@@ -124,7 +134,10 @@ class GameUIRenderer {
 
     // 绘制总时间（右上角）
     final totalTimeText = material.TextSpan(
-      text: 'timeLeftLabel'.tr + ': ${gameTimeLeft.toInt()}s',
+      text:
+          gameTimeLeft == double.infinity
+              ? 'endlessMode'.tr
+              : '${'timeLeftLabel'.tr}: ${gameTimeLeft.toInt()}s',
       style: textStyle,
     );
     final totalTimePainter = material.TextPainter(
@@ -168,19 +181,20 @@ class GameUIRenderer {
   }
 
   String _getBodyPartName(BodyPart part) {
+    bool isFaceFront = faceDirection == FaceDirection.front;
     switch (part) {
       case BodyPart.head:
         return 'headPart'.tr;
       case BodyPart.belly:
         return 'bellyPart'.tr;
       case BodyPart.leftHand:
-        return 'rightHandPart'.tr;
+        return isFaceFront ? 'rightHandPart'.tr : 'leftHandPart'.tr;
       case BodyPart.rightHand:
-        return 'leftHandPart'.tr;
+        return isFaceFront ? 'leftHandPart'.tr : 'rightHandPart'.tr;
       case BodyPart.leftFoot:
-        return 'rightFootPart'.tr;
+        return isFaceFront ? 'rightFootPart'.tr : 'leftFootPart'.tr;
       case BodyPart.rightFoot:
-        return 'leftFootPart'.tr;
+        return isFaceFront ? 'leftFootPart'.tr : 'rightFootPart'.tr;
     }
   }
 }

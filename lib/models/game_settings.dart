@@ -25,7 +25,7 @@ class GameSettings {
 
   GameSettings({
     this.difficulty = DifficultyLevel.medium,
-    this.duration = 20,
+    this.duration = double.infinity,
     this.enableSwing = true,
     this.enableHints = true,
     this.soundEnabled = true,
@@ -37,7 +37,10 @@ class GameSettings {
   factory GameSettings.fromJson(Map<String, dynamic> json) {
     return GameSettings(
       difficulty: DifficultyLevel.fromValue(json['difficulty'] ?? 1),
-      duration: json['duration'] ?? 20,
+      duration:
+          json['duration'] == 'infinity'
+              ? double.infinity
+              : (json['duration'] ?? 20),
       enableSwing: json['enableSwing'] ?? true,
       enableHints: json['enableHints'] ?? true,
       soundEnabled: json['soundEnabled'] ?? true,
@@ -50,7 +53,7 @@ class GameSettings {
   Map<String, dynamic> toJson() {
     return {
       'difficulty': difficulty.value,
-      'duration': duration,
+      'duration': duration == double.infinity ? 'infinity' : duration,
       'enableSwing': enableSwing,
       'enableHints': enableHints,
       'soundEnabled': soundEnabled,

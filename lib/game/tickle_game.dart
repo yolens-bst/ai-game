@@ -52,6 +52,7 @@ class TickleGame extends FlameGame with TapCallbacks {
   // 角色动画状态
   double timer = 0;
   final Random _random = Random();
+  FaceDirection currentFaceDirection = FaceDirection.front;
   double eyeOffset = 0;
   double mouthOpenness = 0;
   double headSwing = 0;
@@ -93,6 +94,7 @@ class TickleGame extends FlameGame with TapCallbacks {
       mouthOpenness: mouthOpenness,
       enableHints: settings.enableHints,
       currentTarget: currentTarget ?? BodyPart.head,
+      faceDirection: currentFaceDirection,
     );
 
     // 延迟初始化UI渲染器
@@ -116,6 +118,10 @@ class TickleGame extends FlameGame with TapCallbacks {
     );
   }
 
+  FaceDirection getRandomFaceDirection() {
+    return _random.nextBool() ? FaceDirection.front : FaceDirection.back;
+  }
+
   void startGame() {
     _initUIRenderer();
     gameTimeLeft = settings.duration;
@@ -135,6 +141,7 @@ class TickleGame extends FlameGame with TapCallbacks {
     legSwing = 0;
     eyeOpenness = 1.0;
     isBlinking = false;
+    currentFaceDirection = getRandomFaceDirection();
 
     _nextQuestion();
     gameTimer.start();
@@ -148,6 +155,7 @@ class TickleGame extends FlameGame with TapCallbacks {
       questionTimeLeft: questionTimeLeft,
       score: score,
       targetBodyPart: currentTarget,
+      faceDirection: currentFaceDirection,
     );
   }
 
@@ -183,11 +191,6 @@ class TickleGame extends FlameGame with TapCallbacks {
   BodyPart? _lastTarget;
 
   void _nextQuestion() {
-    if (startQuestionTime > 0) {
-      responseTimes.add(questionTimeLeft);
-    }
-    startQuestionTime = questionTimeLeft;
-
     final parts = BodyPart.values;
     BodyPart newTarget;
     do {
@@ -196,6 +199,7 @@ class TickleGame extends FlameGame with TapCallbacks {
     } while (newTarget == currentTarget); // 确保新目标不等于当前目标
 
     currentTarget = newTarget;
+    currentFaceDirection = getRandomFaceDirection();
 
     questionTimeLeft =
         settings.difficulty == DifficultyLevel.easy
@@ -203,6 +207,7 @@ class TickleGame extends FlameGame with TapCallbacks {
             : settings.difficulty == DifficultyLevel.medium
             ? 3
             : 2;
+    startQuestionTime = questionTimeLeft;
   }
 
   void endGame() {
@@ -221,7 +226,9 @@ class TickleGame extends FlameGame with TapCallbacks {
               ? validResponseTimes.reduce((a, b) => a + b) /
                   validResponseTimes.length
               : 0,
-      isSuccess: score >= 5,
+      isSuccess:
+          score >=
+          (settings.duration == double.infinity ? 200 : settings.duration * 5),
       correctTaps: correctTaps,
       wrongTaps: wrongTaps,
       accuracy:
@@ -233,7 +240,9 @@ class TickleGame extends FlameGame with TapCallbacks {
     );
 
     // 保存游戏结果到排行榜
-    LeaderboardController.to.addGameResult(result);
+    if (settings.duration == double.infinity) {
+      LeaderboardController.to.addGameResult(result);
+    }
 
     Get.dialog(
       GameResultDialog(result: result),
@@ -298,6 +307,7 @@ class TickleGame extends FlameGame with TapCallbacks {
       mouthOpenness: mouthOpenness,
       enableHints: settings.enableHints,
       currentTarget: currentTarget ?? BodyPart.head,
+      faceDirection: currentFaceDirection,
     );
 
     // 更新UI渲染器状态
@@ -308,6 +318,7 @@ class TickleGame extends FlameGame with TapCallbacks {
       questionTimeLeft: questionTimeLeft,
       score: score,
       targetBodyPart: currentTarget,
+      faceDirection: currentFaceDirection,
     );
   }
 
@@ -370,7 +381,7 @@ class TickleGame extends FlameGame with TapCallbacks {
         if (part == currentTarget) {
           correctTaps++; // 增加正确点击统计
           // 计算距离得分 (距离越近得分越高)
-          final distanceScore = 10 - (distance / circle.radius) * 5;
+          final distanceScore = 10 + (1 - distance / circle.radius) * 5;
           // 应用连击加成
           final comboMultiplier = comboSystem.comboMultiplier;
           final points = (distanceScore * comboMultiplier).ceil();
@@ -384,18 +395,23 @@ class TickleGame extends FlameGame with TapCallbacks {
             Offset(touchPos.x, touchPos.y),
           );
 
-          // 记录精准点击 (距离小于半径1/3)
-          if (distance < circle.radius / 3) {
+          // 记录精准点击 (距离小于半径1/5)
+          if (distance < circle.radius / 5) {
             preciseHits++;
           }
-
           responseTimes.add(startQuestionTime - questionTimeLeft);
           _nextQuestion();
         } else {
-          wrongTaps++;
-          gameTimeLeft -= 2;
-          SoundManager().playWrong();
-          _nextQuestion();
+          if (settings.duration == double.infinity) {
+            gameState = GameState.gameOver;
+            endGame();
+          } else {
+            wrongTaps++;
+            int desscore = settings.duration == 10 ? 1 : 2;
+            gameTimeLeft -= desscore;
+            SoundManager().playWrong();
+            _nextQuestion();
+          }
         }
       }
     });
