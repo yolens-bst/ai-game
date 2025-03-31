@@ -159,23 +159,25 @@ class GameUIRenderer {
 
     const targetHeight = 60.0;
     final targetText = material.TextSpan(
-      text: _getBodyPartName(targetBodyPart!),
+      text:
+          '${_getBodyPartName(targetBodyPart!)}\n${faceDirection == FaceDirection.back ? 'FtoB'.tr : 'FtoF'.tr}',
       style: material.TextStyle(
         color: material.Colors.black,
-        fontSize: 24,
+        fontSize: 18,
         fontWeight: material.FontWeight.bold,
       ),
     );
     final targetPainter = material.TextPainter(
       text: targetText,
       textDirection: material.TextDirection.ltr,
+      textAlign: TextAlign.center,
     );
     targetPainter.layout();
     targetPainter.paint(
       canvas,
       Offset(
         (width - targetPainter.width) / 2,
-        40 + (targetHeight - targetPainter.height) / 2,
+        50 + (targetHeight - targetPainter.height) / 2,
       ),
     );
   }

@@ -1,34 +1,41 @@
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../models/game_result.dart';
 import '../models/game_settings.dart';
 
 class LeaderboardController extends GetxController {
   static LeaderboardController get to => Get.find();
-  final _storage = GetStorage('leaderboard');
   final leaderboard = <GameResult>[].obs;
+  late SharedPreferences _prefs;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
+    _prefs = await SharedPreferences.getInstance();
     _loadLeaderboard();
   }
 
   void _loadLeaderboard() {
-    final saved = _storage.read<List>('leaderboard');
-    if (saved != null) {
-      leaderboard.value =
-          saved
-              .map((json) => GameResult.fromJson(json))
-              .toList()
-              .cast<GameResult>();
+    final jsonString = _prefs.getString('leaderboard');
+    if (jsonString != null) {
+      try {
+        final saved = json.decode(jsonString) as List;
+        leaderboard.value =
+            saved
+                .map((json) => GameResult.fromJson(json))
+                .toList()
+                .cast<GameResult>();
+      } catch (e) {
+        print('Error loading leaderboard: $e');
+      }
     }
   }
 
   void _saveLeaderboard() {
-    _storage.write(
+    _prefs.setString(
       'leaderboard',
-      leaderboard.map((result) => result.toJson()).toList(),
+      json.encode(leaderboard.map((result) => result.toJson()).toList()),
     );
   }
 

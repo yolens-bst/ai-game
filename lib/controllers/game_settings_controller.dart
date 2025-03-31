@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tickle_game/game/character_renderer.dart';
+import 'dart:convert';
 import '../models/game_settings.dart';
 
 class GameSettingsController extends GetxController {
@@ -14,14 +16,23 @@ class GameSettingsController extends GetxController {
     _settings.listen((settings) {
       _soundEnabled.value = settings.soundEnabled;
     });
+    ever(_settings, (GameSettings settings) async {
+      await saveSettings();
+    });
+    init();
   }
 
   Future<void> init() async {
-    final storage = GetStorage();
-    if (storage.hasData('game_settings')) {
-      _settings.value = GameSettings.fromJson(storage.read('game_settings'));
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('game_settings');
+    print((jsonString));
+    if (jsonString != null) {
+      try {
+        _settings.value = GameSettings.fromJson(json.decode(jsonString));
+      } catch (e) {
+        print('Error parsing game settings: $e');
+      }
     }
-    return;
   }
 
   void toggleSound() {
@@ -39,6 +50,12 @@ class GameSettingsController extends GetxController {
   void setDuration(double duration) {
     _settings.update((val) {
       val?.duration = duration;
+    });
+  }
+
+  void setFaceMode(FaceDirection faceMode) {
+    _settings.update((val) {
+      val?.faceMode = faceMode;
     });
   }
 
@@ -73,6 +90,11 @@ class GameSettingsController extends GetxController {
   }
 
   Future<void> saveSettings() async {
-    await GetStorage().write('game_settings', _settings.value.toJson());
+    final prefs = await SharedPreferences.getInstance();
+    print('save' + (_settings.value.toJson()).toString());
+    await prefs.setString(
+      'game_settings',
+      json.encode(_settings.value.toJson()),
+    );
   }
 }

@@ -81,6 +81,10 @@ class Languages extends Translations {
     'hintSystemDesc': '辅助提示: 高亮显示当前目标部位',
     'vibrationFeedbackDesc': '震动反馈: 增强游戏体验',
     'enjoyGameText': '祝您游戏愉快!',
+    'characterMode': '任务模式',
+    'FtoF': '🧑',
+    'FtoB': '🦰',
+    'randomChange': '🧑/🦰',
   };
 
   static final Map<String, String> enUS = {
@@ -165,5 +169,9 @@ class Languages extends Translations {
     'hintSystemDesc': 'Hint System: Highlights current target area',
     'vibrationFeedbackDesc': 'Vibration Feedback: Enhances gameplay',
     'enjoyGameText': 'Enjoy the game!',
+    'characterMode': 'Character Mode',
+    'FtoF': '🧑',
+    'FtoB': '🦰',
+    'randomChange': '🧑/🦰',
   };
 }

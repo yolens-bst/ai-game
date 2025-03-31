@@ -33,8 +33,13 @@ class TickleGame extends FlameGame with TapCallbacks {
   static late TickleGame instance;
   final GameSettings settings;
   final SoundManager _soundManager = SoundManager();
+  FaceDirection currentFaceDirection = FaceDirection.front;
 
-  TickleGame({required this.settings});
+  TickleGame({required this.settings}) {
+    if (settings.faceMode != FaceDirection.auto) {
+      currentFaceDirection = settings.faceMode;
+    }
+  }
 
   // 游戏状态
   GameState gameState = GameState.waiting;
@@ -53,7 +58,6 @@ class TickleGame extends FlameGame with TapCallbacks {
   // 角色动画状态
   double timer = 0;
   final Random _random = Random();
-  FaceDirection currentFaceDirection = FaceDirection.front;
   double eyeOffset = 0;
   double mouthOpenness = 0;
   double headSwing = 0;
@@ -173,7 +177,9 @@ class TickleGame extends FlameGame with TapCallbacks {
     legSwing = 0;
     eyeOpenness = 1.0;
     isBlinking = false;
-    currentFaceDirection = getRandomFaceDirection();
+    if (settings.faceMode == FaceDirection.auto) {
+      currentFaceDirection = getRandomFaceDirection();
+    }
 
     _nextQuestion();
     gameTimer.start();
@@ -231,7 +237,9 @@ class TickleGame extends FlameGame with TapCallbacks {
     } while (newTarget == currentTarget); // 确保新目标不等于当前目标
 
     currentTarget = newTarget;
-    currentFaceDirection = getRandomFaceDirection();
+    if (settings.faceMode == FaceDirection.auto) {
+      currentFaceDirection = getRandomFaceDirection();
+    }
 
     questionTimeLeft =
         settings.difficulty == DifficultyLevel.easy

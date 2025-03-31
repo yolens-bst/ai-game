@@ -1,13 +1,20 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'dart:math' as math;
 
 import 'package:tickle_game/game/tickle_game.dart';
 
 enum FaceDirection {
-  front, // 正脸
-  back, // 背脸
+  front(1, 'front'), // 正脸
+  back(2, 'back'), // 背脸
+  auto(3, 'auto'); //自动
+
+  final int value;
+  final String label;
+  const FaceDirection(this.value, this.label);
+  static FaceDirection fromValue(int value) {
+    return values.firstWhere((e) => e.value == value, orElse: () => front);
+  }
 }
 
 class CharacterRenderer {
@@ -111,76 +118,116 @@ class CharacterRenderer {
         mouthPaint,
       );
     } else {
-      // 背脸时绘制头发 - 发丝效果
+      // 背脸时绘制头发 - 更自然流畅的发丝效果
       final hairPaint =
           Paint()
             ..color = Colors.black.withOpacity(0.8)
             ..style = PaintingStyle.stroke
             ..strokeWidth = 2;
 
-      // 绘制多缕发丝
-      for (var i = 0; i < 15; i++) {
-        final offset = i * 6 - 45;
+      // 绘制多缕发丝 - 增加随机性和自然感
+      for (var i = 0; i < 20; i++) {
+        final offset = i * 5 - 50;
+        final curlFactor = math.sin(i * 0.3) * 10;
         final path =
             Path()
               ..moveTo(headCenter.dx + offset, headCenter.dy - 30)
               ..quadraticBezierTo(
-                headCenter.dx + offset + 10 + headSwing * 15,
-                headCenter.dy - 60 - i * 2,
-                headCenter.dx + offset * 0.3,
+                headCenter.dx + offset + 15 + headSwing * 20 + curlFactor,
                 headCenter.dy - 70 - i * 1.5,
+                headCenter.dx + offset * 0.4,
+                headCenter.dy - 80 - i * 1.2,
               )
               ..quadraticBezierTo(
-                headCenter.dx + offset * 0.5 + headSwing * 15,
-                headCenter.dy - 60 - i * 2,
+                headCenter.dx + offset * 0.6 + headSwing * 20 + curlFactor,
+                headCenter.dy - 70 - i * 1.5,
                 headCenter.dx + offset,
                 headCenter.dy - 30,
               )
-              ..lineTo(headCenter.dx + offset, headCenter.dy + 30 - i * 0.5)
+              ..lineTo(headCenter.dx + offset, headCenter.dy + 30 - i * 0.3)
               ..quadraticBezierTo(
-                headCenter.dx + offset * 0.7,
-                headCenter.dy + 40 - i * 0.5,
-                headCenter.dx + offset * 0.3,
-                headCenter.dy + 30 - i * 0.5,
+                headCenter.dx + offset * 0.6,
+                headCenter.dy + 45 - i * 0.3,
+                headCenter.dx + offset * 0.4,
+                headCenter.dy + 30 - i * 0.3,
               );
         canvas.drawPath(path, hairPaint);
       }
 
-      // 绘制头发轮廓
-      final outlinePaint =
+      // 绘制头发轮廓 - 增加层次感和光影效果
+      final baseHairPaint =
           Paint()
-            ..color = Colors.black.withOpacity(0.6)
+            ..color = Colors.black.withOpacity(0.7)
             ..style = PaintingStyle.fill;
+
+      final highlightPaint =
+          Paint()
+            ..color = Colors.grey[800]!.withOpacity(0.4)
+            ..style = PaintingStyle.fill;
+
+      // 基础头发轮廓
       final outlinePath =
           Path()
-            ..moveTo(headCenter.dx - 50, headCenter.dy - 30)
+            ..moveTo(headCenter.dx - 55, headCenter.dy - 35)
             ..quadraticBezierTo(
-              headCenter.dx - 30 + headSwing * 15,
+              headCenter.dx - 35 + headSwing * 20,
+              headCenter.dy - 70,
+              headCenter.dx,
+              headCenter.dy - 80,
+            )
+            ..quadraticBezierTo(
+              headCenter.dx + 35 + headSwing * 20,
+              headCenter.dy - 70,
+              headCenter.dx + 55,
+              headCenter.dy - 35,
+            )
+            ..lineTo(headCenter.dx + 55, headCenter.dy + 35)
+            ..quadraticBezierTo(
+              headCenter.dx + 35,
+              headCenter.dy + 45,
+              headCenter.dx,
+              headCenter.dy + 45,
+            )
+            ..quadraticBezierTo(
+              headCenter.dx - 35,
+              headCenter.dy + 45,
+              headCenter.dx - 55,
+              headCenter.dy + 35,
+            )
+            ..close();
+      canvas.drawPath(outlinePath, baseHairPaint);
+
+      // 高光层
+      final highlightPath =
+          Path()
+            ..moveTo(headCenter.dx - 40, headCenter.dy - 30)
+            ..quadraticBezierTo(
+              headCenter.dx - 20 + headSwing * 15,
               headCenter.dy - 60,
               headCenter.dx,
               headCenter.dy - 70,
             )
             ..quadraticBezierTo(
-              headCenter.dx + 30 + headSwing * 15,
+              headCenter.dx + 20 + headSwing * 15,
               headCenter.dy - 60,
-              headCenter.dx + 50,
+              headCenter.dx + 40,
               headCenter.dy - 30,
             )
-            ..lineTo(headCenter.dx + 50, headCenter.dy + 30)
+            ..lineTo(headCenter.dx + 40, headCenter.dy + 30)
             ..quadraticBezierTo(
-              headCenter.dx + 30,
+              headCenter.dx + 20,
               headCenter.dy + 40,
               headCenter.dx,
               headCenter.dy + 40,
             )
             ..quadraticBezierTo(
-              headCenter.dx - 30,
+              headCenter.dx - 20,
               headCenter.dy + 40,
-              headCenter.dx - 50,
+              headCenter.dx - 40,
               headCenter.dy + 30,
             )
             ..close();
-      canvas.drawPath(outlinePath, outlinePaint);
+      canvas.drawPath(highlightPath, highlightPaint);
     }
 
     // 更新碰撞检测区域

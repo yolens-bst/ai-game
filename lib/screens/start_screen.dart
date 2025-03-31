@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:tickle_game/game/character_renderer.dart';
 import '../game/sound_manager.dart';
 import '../models/game_settings.dart';
 import './rules_screen.dart';
@@ -125,6 +126,8 @@ class StartScreenState extends State<StartScreen> {
                     _buildDifficultySelector(),
                     Divider(height: 1),
                     _buildDurationSelector(),
+                    Divider(height: 1),
+                    _buildFaceModeSelector(),
                     Divider(height: 1),
                     _buildSwingToggle(),
                     Divider(height: 1),
@@ -254,6 +257,28 @@ class StartScreenState extends State<StartScreen> {
           selected: {_settingsController.settings.duration},
           onSelectionChanged: (newSelection) {
             _settingsController.setDuration(newSelection.first);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFaceModeSelector() {
+    return Obx(
+      () => ListTile(
+        title: Text('characterMode'.tr),
+        trailing: SegmentedButton<FaceDirection>(
+          segments: [
+            ButtonSegment(value: FaceDirection.front, label: Text('FtoF'.tr)),
+            ButtonSegment(value: FaceDirection.back, label: Text('FtoB'.tr)),
+            ButtonSegment(
+              value: FaceDirection.auto,
+              label: Text('randomChange'.tr),
+            ),
+          ],
+          selected: {_settingsController.settings.faceMode},
+          onSelectionChanged: (newSelection) {
+            _settingsController.setFaceMode(newSelection.first);
           },
         ),
       ),

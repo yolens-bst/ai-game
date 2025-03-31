@@ -1,3 +1,5 @@
+import 'package:tickle_game/game/character_renderer.dart';
+
 enum DifficultyLevel {
   easy(1, 'easy'),
   medium(2, 'medium'),
@@ -22,6 +24,7 @@ class GameSettings {
   bool vibrationEnabled;
   String playerName;
   String language;
+  FaceDirection faceMode;
 
   GameSettings({
     this.difficulty = DifficultyLevel.medium,
@@ -32,6 +35,7 @@ class GameSettings {
     this.vibrationEnabled = true,
     this.playerName = 'Player',
     this.language = 'zh_CN',
+    this.faceMode = FaceDirection.front,
   });
 
   factory GameSettings.fromJson(Map<String, dynamic> json) {
@@ -47,6 +51,7 @@ class GameSettings {
       vibrationEnabled: json['vibrationEnabled'] ?? true,
       playerName: json['playerName'] ?? 'Player',
       language: json['language'] ?? 'zh_CN',
+      faceMode: FaceDirection.fromValue(json['faceMode'] ?? 1),
     );
   }
 
@@ -60,6 +65,7 @@ class GameSettings {
       'vibrationEnabled': vibrationEnabled,
       'playerName': playerName,
       'language': language,
+      'faceMode': faceMode.value,
     };
   }
 }
