@@ -138,6 +138,7 @@ class SoundManager {
       await _bgmPlayer.setAsset(
         isHome ? 'assets/sounds/home-bgm.mp3' : 'assets/sounds/bgm.mp3',
       );
+      print('initState');
       await _bgmPlayer.play();
       await _fadeIn(duration: 1.0);
     } catch (e) {
@@ -149,6 +150,7 @@ class SoundManager {
     // await _fadeOut();
     await _bgmPlayer.setLoopMode(LoopMode.off);
     await _bgmPlayer.stop();
+    print('stopBgm');
   }
 
   Future<void> _fadeIn({double duration = 3.0}) async {

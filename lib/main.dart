@@ -12,9 +12,16 @@ import 'controllers/game_settings_controller.dart';
 import 'controllers/leaderboard_controller.dart';
 import 'package:flutter/services.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:audio_session/audio_session.dart';
+
+Future<void> _initAudioSession() async {
+  final session = await AudioSession.instance;
+  await session.configure(AudioSessionConfiguration.music()); // 允许后台播放
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await _initAudioSession();
   await GetStorage.init();
   Get.put(GameSettingsController());
   Get.put(LeaderboardController());
@@ -82,7 +89,7 @@ class GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvokedWithResult: (didPop, result) => SoundManager().playClick(),
+      onPopInvokedWithResult: (didPop, result) => {SoundManager().playClick()},
       child: Scaffold(
         appBar: AppBar(
           title: Text('appTitle'.tr),

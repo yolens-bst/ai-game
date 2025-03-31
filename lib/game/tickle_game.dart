@@ -75,10 +75,19 @@ class TickleGame extends FlameGame with TapCallbacks {
   Color backgroundColor() => material.Color(0xFFF5F5F5);
 
   @override
+  void onDispose() {
+    _soundManager.stopBgm();
+    super.onDispose();
+  }
+
+  @override
   Future<void> onLoad() async {
     instance = this;
     await super.onLoad();
-    _soundManager.playBgm(isHome: false);
+    // _soundManager.playBgm(isHome: false);
+    Future.delayed(Duration(milliseconds: 500), () {
+      _soundManager.playBgm(isHome: false);
+    });
     _initBodyParts();
     camera.viewfinder.visibleGameSize = Vector2(size.x, size.y);
     camera.viewfinder.position = Vector2(size.x / 2, size.y / 2);
@@ -235,7 +244,7 @@ class TickleGame extends FlameGame with TapCallbacks {
 
   void endGame() {
     gameTimer.stop();
-    _soundManager.stopBgm();
+    // _soundManager.stopBgm();
     // 过滤掉无效响应时间(<=0)
     final validResponseTimes = responseTimes.where((t) => t > 0).toList();
     final result = GameResult(

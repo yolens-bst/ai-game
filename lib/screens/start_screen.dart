@@ -24,7 +24,9 @@ class StartScreenState extends State<StartScreen> {
   void initState() {
     super.initState();
     if (_settingsController.settings.soundEnabled) {
-      _soundManager.playBgm(isHome: true);
+      Future.delayed(Duration(milliseconds: 500), () {
+        _soundManager.playBgm(isHome: true);
+      });
     }
   }
 

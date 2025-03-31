@@ -48,11 +48,14 @@ class CharacterRenderer {
     // 绘制身体
     final bodyPaint = Paint()..color = Colors.orange.shade400;
     final bodyCenter = Offset(characterAnchor.x, characterAnchor.y + 50);
-    canvas.drawCircle(
-      bodyCenter,
-      70, // 与TickleGame中bodyParts[BodyPart.belly]的radius一致
-      bodyPaint,
-    );
+    if (faceDirection == FaceDirection.front) {
+      // 绘制身体
+      canvas.drawCircle(
+        bodyCenter,
+        70, // 与TickleGame中bodyParts[BodyPart.belly]的radius一致
+        bodyPaint,
+      );
+    }
 
     // 绘制头部
     final headPaint = Paint()..color = Colors.blue.shade200;
@@ -235,6 +238,13 @@ class CharacterRenderer {
       ),
       bonePaint,
     );
+    if (faceDirection == FaceDirection.back) {
+      canvas.drawCircle(
+        bodyCenter,
+        70, // 与TickleGame中bodyParts[BodyPart.belly]的radius一致
+        bodyPaint,
+      );
+    }
 
     // 绘制手部
     final handPaint = Paint()..color = Colors.blue.shade200;
