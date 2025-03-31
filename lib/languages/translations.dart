@@ -68,7 +68,7 @@ class Languages extends Translations {
     'scoringRules': '得分规则',
     'difficultyLevels': '难度级别',
     'specialEffects': '特殊效果',
-    'gameObjectiveDesc': '在规定时间内尽可能多地点击出现的痒痒点',
+    'gameObjectiveDesc': '在规定时间内尽可能多地点击出现的痒痒点，游戏过程中站位会随机的改变（可能背对玩家，也可能面对玩家）',
     'normalModeDesc': '普通模式: 限时挑战(10/30秒可选)',
     'endlessModeDesc': '无尽模式: 持续挑战直到错误点击',
     'baseScoreDesc': '基础得分: 每次正确点击获得10分',
@@ -148,7 +148,7 @@ class Languages extends Translations {
     'difficultyLevels': 'Difficulty Levels',
     'specialEffects': 'Special Effects',
     'gameObjectiveDesc':
-        'Click as many tickle spots as possible within the time limit',
+        'Click as many tickle spots as possible within the time limit, the position will change randomly during the game (may be facing away from the player, may also be facing the player)',
     'normalModeDesc': 'Normal Mode: Timed challenge (10/30 seconds options)',
     'endlessModeDesc': 'Endless Mode: Continuous challenge until wrong tap',
     'baseScoreDesc': 'Base Score: 10 points per correct tap',
