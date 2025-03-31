@@ -174,13 +174,13 @@ class GameUIRenderer {
       case BodyPart.belly:
         return 'bellyPart'.tr;
       case BodyPart.leftHand:
-        return 'leftHandPart'.tr;
-      case BodyPart.rightHand:
         return 'rightHandPart'.tr;
+      case BodyPart.rightHand:
+        return 'leftHandPart'.tr;
       case BodyPart.leftFoot:
-        return 'leftFootPart'.tr;
-      case BodyPart.rightFoot:
         return 'rightFootPart'.tr;
+      case BodyPart.rightFoot:
+        return 'leftFootPart'.tr;
     }
   }
 }
