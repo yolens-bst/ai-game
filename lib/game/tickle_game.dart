@@ -138,6 +138,25 @@ class TickleGame extends FlameGame with TapCallbacks {
     startGame();
   }
 
+  Future<void> _drawTargetPng(Canvas canvas) async {
+    // 加载 PNG 图片
+    final sprite = await loadSprite(
+      currentFaceDirection == FaceDirection.front
+          ? 'bear-o.png'
+          : 'back-bear-o.png',
+    );
+    // final sprite = await loadSprite('h.jpeg');
+    // 创建 SpriteComponent 并添加到游戏世界
+    final spriteComponent = SpriteComponent(
+      sprite: sprite,
+      size: Vector2(150, 150), // 设置大小
+      position: Vector2(100, 100), // 设置位置
+      paint: Paint()..blendMode = BlendMode.srcATop,
+    );
+
+    add(spriteComponent);
+  }
+
   void updateHitAreas({
     required Offset headCenter,
     required double headRadius,
@@ -322,7 +341,6 @@ class TickleGame extends FlameGame with TapCallbacks {
   void update(double dt) {
     super.update(dt);
     _updateAnimations(dt);
-
     if (gameState == GameState.playing) {
       gameTimeLeft = max(0, gameTimeLeft - dt);
       questionTimeLeft = max(0, questionTimeLeft - dt);
@@ -331,7 +349,12 @@ class TickleGame extends FlameGame with TapCallbacks {
         gameState = GameState.gameOver;
         endGame();
       } else if (questionTimeLeft <= 0) {
-        _nextQuestion();
+        if (settings.duration == double.infinity) {
+          gameState = GameState.gameOver;
+          endGame();
+        } else {
+          _nextQuestion();
+        }
       }
     }
 
@@ -463,6 +486,7 @@ class TickleGame extends FlameGame with TapCallbacks {
 
     // 保存当前画布状态
     canvas.save();
+    _drawTargetPng(canvas);
 
     // 绘制角色区域（留出顶部100像素给UI）
     canvas.clipRect(Rect.fromLTWH(0, 100, size.x, size.y - 100));

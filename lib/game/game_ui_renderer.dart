@@ -159,8 +159,7 @@ class GameUIRenderer {
 
     const targetHeight = 60.0;
     final targetText = material.TextSpan(
-      text:
-          '${_getBodyPartName(targetBodyPart!)}\n${faceDirection == FaceDirection.back ? 'FtoB'.tr : 'FtoF'.tr}',
+      text: _getBodyPartName(targetBodyPart!),
       style: material.TextStyle(
         color: material.Colors.black,
         fontSize: 18,

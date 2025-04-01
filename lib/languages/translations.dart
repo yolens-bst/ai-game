@@ -82,13 +82,13 @@ class Languages extends Translations {
     'vibrationFeedbackDesc': '震动反馈: 增强游戏体验',
     'enjoyGameText': '祝您游戏愉快!',
     'characterMode': '任务模式',
-    'FtoF': '🧑',
-    'FtoB': '🦰',
+    'FtoF': 'FtoF',
+    'FtoB': 'FtoB',
     'randomChange': '🧑/🦰',
   };
 
   static final Map<String, String> enUS = {
-    'appTitle': 'Tickle',
+    'appTitle': 'Tickle-Wump Time!',
     'startGame': 'Start Game',
     'gameRules': 'Game Rules',
     'leaderboard': 'Leaderboard',
@@ -170,8 +170,8 @@ class Languages extends Translations {
     'vibrationFeedbackDesc': 'Vibration Feedback: Enhances gameplay',
     'enjoyGameText': 'Enjoy the game!',
     'characterMode': 'Character Mode',
-    'FtoF': '🧑',
-    'FtoB': '🦰',
+    'FtoF': 'FtoF',
+    'FtoB': 'FtoB',
     'randomChange': '🧑/🦰',
   };
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -269,11 +271,39 @@ class StartScreenState extends State<StartScreen> {
         title: Text('characterMode'.tr),
         trailing: SegmentedButton<FaceDirection>(
           segments: [
-            ButtonSegment(value: FaceDirection.front, label: Text('FtoF'.tr)),
-            ButtonSegment(value: FaceDirection.back, label: Text('FtoB'.tr)),
+            ButtonSegment(
+              value: FaceDirection.front,
+              label: Image.file(
+                File('assets/images/bear-o.png'),
+                width: 32,
+                height: 32,
+              ),
+            ),
+            ButtonSegment(
+              value: FaceDirection.back,
+              label: Image.file(
+                File('assets/images/back-bear-o.png'),
+                width: 32,
+                height: 32,
+              ),
+            ),
             ButtonSegment(
               value: FaceDirection.auto,
-              label: Text('randomChange'.tr),
+              label: Row(
+                children: [
+                  Image.file(
+                    File('assets/images/bear-o.png'),
+                    width: 32,
+                    height: 32,
+                  ),
+                  Icon(Icons.swap_horiz_outlined, color: Colors.purple),
+                  Image.file(
+                    File('assets/images/back-bear-o.png'),
+                    width: 32,
+                    height: 32,
+                  ),
+                ],
+              ),
             ),
           ],
           selected: {_settingsController.settings.faceMode},

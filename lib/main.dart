@@ -21,6 +21,7 @@ Future<void> _initAudioSession() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
   await _initAudioSession();
   await GetStorage.init();
   Get.put(GameSettingsController());
@@ -35,7 +36,7 @@ void main() async {
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     await SystemChrome.setApplicationSwitcherDescription(
       ApplicationSwitcherDescription(
-        label: 'appTitle'.tr,
+        label: 'Tickle-Wump Time!',
         primaryColor: Colors.blue.value,
       ),
     );
@@ -45,6 +46,7 @@ void main() async {
     await WindowManager.instance.setResizable(false);
     await WindowManager.instance.setMinimumSize(const Size(860, 720));
     await WindowManager.instance.setMaximumSize(const Size(860, 720));
+    await WindowManager.instance.setTitle('Tickle-Wump Time!');
   }
   runApp(MyApp());
 }
