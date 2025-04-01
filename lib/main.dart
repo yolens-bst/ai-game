@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flame/game.dart';
@@ -21,14 +24,16 @@ Future<void> _initAudioSession() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
+  if (!kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
+    await windowManager.ensureInitialized();
+  }
   await _initAudioSession();
   await GetStorage.init();
   Get.put(GameSettingsController());
   Get.put(LeaderboardController());
 
   // Set window size to 860x720 and disable resizing
-  if (GetPlatform.isDesktop) {
+  if (!kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
