@@ -273,16 +273,16 @@ class StartScreenState extends State<StartScreen> {
           segments: [
             ButtonSegment(
               value: FaceDirection.front,
-              label: Image.file(
-                File('assets/images/bear-o.png'),
+              label: Image.asset(
+                'assets/images/bear-o.png',
                 width: 32,
                 height: 32,
               ),
             ),
             ButtonSegment(
               value: FaceDirection.back,
-              label: Image.file(
-                File('assets/images/back-bear-o.png'),
+              label: Image.asset(
+                'assets/images/back-bear-o.png',
                 width: 32,
                 height: 32,
               ),
@@ -291,14 +291,14 @@ class StartScreenState extends State<StartScreen> {
               value: FaceDirection.auto,
               label: Row(
                 children: [
-                  Image.file(
-                    File('assets/images/bear-o.png'),
+                  Image.asset(
+                    'assets/images/bear-o.png',
                     width: 32,
                     height: 32,
                   ),
                   Icon(Icons.swap_horiz_outlined, color: Colors.purple),
-                  Image.file(
-                    File('assets/images/back-bear-o.png'),
+                  Image.asset(
+                    'assets/images/back-bear-o.png',
                     width: 32,
                     height: 32,
                   ),
