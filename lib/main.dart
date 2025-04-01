@@ -45,7 +45,7 @@ void main() async {
     await WindowManager.instance.setSize(const Size(860, 720));
     await WindowManager.instance.setResizable(false);
     await WindowManager.instance.setMinimumSize(const Size(860, 720));
-    await WindowManager.instance.setMaximumSize(const Size(860, 720));
+    await WindowManager.instance.setMaximizable(false);
     await WindowManager.instance.setTitle('Tickle-Wump Time!');
   }
   runApp(MyApp());
