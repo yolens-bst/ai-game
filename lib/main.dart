@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
           Get.find<GameSettingsController>().settings.language == 'zh_CN'
               ? const Locale('zh', 'CN')
               : const Locale('en', 'US'),
-      fallbackLocale: const Locale('zh', 'CN'),
+      fallbackLocale: const Locale('en', 'US'),
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
